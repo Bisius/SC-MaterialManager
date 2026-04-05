@@ -4,11 +4,12 @@ import { MaterialStorageService } from '../../services/material-storage.service'
 import { StationsComponent } from './tabs/stations/stations.component';
 import { AddMaterialComponent } from './tabs/add-material/add-material.component';
 import { CargoManifestComponent } from './tabs/cargo-manifest/cargo-manifest.component';
+import { AddLocationComponent } from './tabs/add-location/add-location.component';
 
 @Component({
   selector: 'app-materials',
   standalone: true,
-  imports: [StationsComponent, AddMaterialComponent, CargoManifestComponent],
+  imports: [StationsComponent, AddMaterialComponent, CargoManifestComponent, AddLocationComponent],
   templateUrl: './materials.component.html',
 })
 export class MaterialsComponent {
@@ -18,6 +19,7 @@ export class MaterialsComponent {
 
   showStationsModal = false;
   showAddModal = false;
+  showAddLocationModal = false;
 
   get activeStationCount(): number { return this.filter.activeStationCount(); }
   get recordCount(): number         { return this.storage.getAll().length; }

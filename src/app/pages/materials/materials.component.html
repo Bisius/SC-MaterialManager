@@ -21,6 +21,9 @@
             <span class="ml-1 text-hud-accent glow-cyan-sm">{{ activeStationCount }}</span>
           }
         </button>
+        <button (click)="showAddLocationModal = true" class="hud-toolbar-btn">
+          [ + LOCATION ]
+        </button>
         <button (click)="showAddModal = true" class="hud-toolbar-btn">
           [ ADD MATERIAL ]
         </button>
@@ -45,6 +48,18 @@
             <app-stations />
           </div>
         </div>
+      </div>
+    </div>
+  }
+
+  <!-- Add Location Modal -->
+  @if (showAddLocationModal) {
+    <div class="fixed inset-0 bg-black/70 z-40 flex items-start justify-center py-16 overflow-y-auto px-4"
+         (click)="showAddLocationModal = false">
+      <div class="relative w-full max-w-2xl" (click)="$event.stopPropagation()">
+        <button (click)="showAddLocationModal = false"
+                class="absolute top-3 right-3 z-10 hud-btn-ghost text-base leading-none px-2 py-0.5">✕</button>
+        <app-add-location />
       </div>
     </div>
   }

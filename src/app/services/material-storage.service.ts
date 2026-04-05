@@ -32,6 +32,11 @@ export class MaterialStorageService {
     this.save(this.records().map(r => ids.includes(r.id) ? { ...r, location: newLocation } : r));
   }
 
+  replaceAll(incoming: Omit<MaterialRecord, 'id'>[]): void {
+    const records = incoming.map(r => ({ ...r, id: crypto.randomUUID() }));
+    this.save(records);
+  }
+
   private load(): MaterialRecord[] {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];

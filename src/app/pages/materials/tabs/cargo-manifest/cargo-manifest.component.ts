@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ElementRef, ViewChild, ChangeDetectorRef, HostListener, computed } from '@angular/core';
+import { Component, OnInit, inject, ElementRef, ViewChild, ChangeDetectorRef, HostListener, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { materials, Material } from '../../../../data/materials';
 import { locations, Location } from '../../../../data/locations';
@@ -257,6 +257,9 @@ export class CargoManifestComponent implements OnInit {
     this.importInput.nativeElement.click();
   }
 
+  pendingImportData = signal<MaterialRecord[]>([]);
+  showImportModal = false;
+
   onImportFile(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
@@ -265,15 +268,30 @@ export class CargoManifestComponent implements OnInit {
       try {
         const data = JSON.parse(reader.result as string) as MaterialRecord[];
         if (!Array.isArray(data)) return;
-        data.forEach(r => {
-          if (r.material && r.location && r.quantity != null && r.quality != null) {
-            this.storage.add({ material: r.material, quality: r.quality, quantity: r.quantity, location: r.location });
-          }
-        });
+        const valid = data.filter(
+          r => r.material && r.location && r.quantity != null && r.quality != null
+        );
+        if (valid.length === 0) return;
+        this.pendingImportData.set(valid);
+        this.showImportModal = true;
         this.cdr.detectChanges();
       } catch { /* invalid file, silently ignore */ }
     };
     reader.readAsText(file);
+  }
+
+  confirmImport(mode: 'replace' | 'merge'): void {
+    const data = this.pendingImportData();
+    if (mode === 'replace') {
+      this.storage.replaceAll(data);
+    } else {
+      data.forEach(r => this.storage.add(
+        { material: r.material, quality: r.quality, quantity: r.quantity, location: r.location }
+      ));
+    }
+    this.showImportModal = false;
+    this.pendingImportData.set([]);
+    this.cdr.detectChanges();
   }
 
   toggleSelect(id: string): void {

@@ -1,13 +1,23 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { locations, Location } from '../data/locations';
+import { CustomLocationService } from './custom-location.service';
 
 const STATIONS_KEY = 'sc_active_stations';
 
 @Injectable({ providedIn: 'root' })
 export class StationFilterService {
 
-  readonly allLocations: Location[] = locations;
-  readonly systems: string[] = [...new Set(locations.map(l => l.system))];
+  private customSvc = inject(CustomLocationService);
+
+  /** All locations: built-in + custom */
+  readonly allLocations = computed<Location[]>(() => [
+    ...locations,
+    ...this.customSvc.customLocations(),
+  ]);
+
+  readonly systems = computed<string[]>(() =>
+    [...new Set(this.allLocations().map(l => l.system))]
+  );
 
   private _active = signal<Set<string>>(this.load());
 
@@ -19,18 +29,19 @@ export class StationFilterService {
 
   /** Systems that have at least one active location (or all if none selected) */
   readonly filteredSystems = computed(() => {
-    if (this._active().size === 0) return this.systems;
-    return this.systems.filter(s => this.filteredLocationsBySystem(s).length > 0);
+    if (this._active().size === 0) return this.systems();
+    return this.systems().filter(s => this.filteredLocationsBySystem(s).length > 0);
   });
 
   locationsBySystem(system: string): Location[] {
-    return this.allLocations.filter(l => l.system === system);
+    return this.allLocations().filter(l => l.system === system);
   }
 
   filteredLocationsBySystem(system: string): Location[] {
     const all = this.locationsBySystem(system);
     if (this._active().size === 0) return all;
-    return all.filter(l => this._active().has(l.name));
+    const customNames = new Set(this.customSvc.customLocations().map(l => l.name));
+    return all.filter(l => customNames.has(l.name) || this._active().has(l.name));
   }
 
   isStationActive(name: string): boolean {
