@@ -4,6 +4,7 @@ import { materials, Material } from '../../../../data/materials';
 import { locations, Location } from '../../../../data/locations';
 import { MaterialStorageService } from '../../../../services/material-storage.service';
 import { StationFilterService } from '../../../../services/station-filter.service';
+import { CustomLocationService } from '../../../../services/custom-location.service';
 import { MaterialRecord } from '../../../../models/material-record';
 
 interface MaterialGroup {
@@ -26,6 +27,7 @@ export class CargoManifestComponent implements OnInit {
   readonly allLocations: Location[] = locations;
   private storage = inject(MaterialStorageService);
   private filter = inject(StationFilterService);
+  private customLocSvc = inject(CustomLocationService);
   private cdr = inject(ChangeDetectorRef);
 
   get transferLocations(): Location[] {
@@ -282,6 +284,13 @@ export class CargoManifestComponent implements OnInit {
 
   confirmImport(mode: 'replace' | 'merge'): void {
     const data = this.pendingImportData();
+
+    // Register any location names not already known as custom locations
+    const knownNames = new Set(this.filter.allLocations().map(l => l.name));
+    const uniqueNewLocs = [...new Set(data.map(r => r.location))]
+      .filter(name => !knownNames.has(name));
+    uniqueNewLocs.forEach(name => this.customLocSvc.add(name, 'custom', false));
+
     if (mode === 'replace') {
       this.storage.replaceAll(data);
     } else {
