@@ -20,6 +20,17 @@ export class MaterialsComponent {
   showStationsModal = false;
   showAddModal = false;
   showAddLocationModal = false;
+  showChangelogModal = false;
+
+  readonly changelog: { version: string; date: string; changes: string[] }[] = [
+    {
+      version: 'v1.0',
+      date: '2026-04-05',
+      changes: [
+        'Initial release',
+      ],
+    },
+  ];
 
   get activeStationCount(): number { return this.filter.activeStationCount(); }
   get recordCount(): number         { return this.storage.getAll().length; }
