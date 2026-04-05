@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ElementRef, ViewChild, ChangeDetectorRef, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { materials, Material } from '../../../../data/materials';
 import { locations, Location } from '../../../../data/locations';
@@ -48,19 +48,54 @@ export class CargoManifestComponent implements OnInit {
   qtyMin = 0;
   qtyMax = 100;
 
+  readonly qualityShortcuts = [500, 700, 800, 900, 950];
+  filtersCollapsed = false;
+  selectedMaterials = new Set<string>();
+  matDropPos: { top: number; left: number } | null = null;
+
+  openMaterialDropdown(e: MouseEvent): void {
+    e.stopPropagation();
+    if (this.matDropPos) { this.matDropPos = null; return; }
+    const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    this.matDropPos = { top: r.bottom + 4, left: r.left };
+  }
+
+  get availableMaterials(): string[] {
+    return [...new Set(this.records.map(r => r.material))]
+      .sort((a, b) => this.materialName(a).localeCompare(this.materialName(b)));
+  }
+
+  toggleMaterialFilter(mat: string): void {
+    const next = new Set(this.selectedMaterials);
+    next.has(mat) ? next.delete(mat) : next.add(mat);
+    this.selectedMaterials = next;
+  }
+
+  isMaterialFiltered(mat: string): boolean {
+    return this.selectedMaterials.has(mat);
+  }
+
+  setQualityMin(min: number): void {
+    this.qualityMin = min;
+    this.qualityMax = 1000;
+  }
+
   get hasActiveFilter(): boolean {
     return this.qualityMin > 0 || this.qualityMax < 1000 ||
-           this.qtyMin > 0 || this.qtyMax < 100;
+           this.qtyMin > 0 || this.qtyMax < 100 ||
+           this.selectedMaterials.size > 0;
   }
 
   resetFilters(): void {
     this.qualityMin = 0; this.qualityMax = 1000;
     this.qtyMin = 0; this.qtyMax = 100;
+    this.selectedMaterials = new Set();
   }
 
   private passesFilter(r: MaterialRecord): boolean {
     return r.quality >= this.qualityMin && r.quality <= this.qualityMax &&
-           r.quantity >= this.qtyMin && r.quantity <= this.qtyMax;
+           r.quantity >= this.qtyMin && r.quantity <= this.qtyMax &&
+           (this.selectedMaterials.size === 0 || this.selectedMaterials.has(r.material));
   }
 
   get selectedCount(): number { return this.selectedIds.size; }
@@ -179,6 +214,14 @@ export class CargoManifestComponent implements OnInit {
   }
 
   @ViewChild('importInput') importInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('matDropRef') matDropRef!: ElementRef<HTMLElement>;
+
+  @HostListener('document:click', ['$event'])
+  onDocClick(e: MouseEvent): void {
+    if (this.matDropPos && this.matDropRef && !this.matDropRef.nativeElement.contains(e.target as Node)) {
+      this.matDropPos = null;
+    }
+  }
 
   onExport(): void {
     const exportData = this.records.map(({ id: _id, ...rest }) => rest);

@@ -16,45 +16,103 @@
 
   <!-- Filter panel -->
   @if (records.length > 0) {
-    <div class="bg-[#091525] border border-[#0d2a40] px-4 py-3 mb-6 flex items-center gap-x-6 gap-y-3 overflow-visible relative z-20">
-      <span class="hud-label shrink-0">// Filters</span>
+    <div class="bg-[#091525] border border-[#0d2a40] px-4 py-3 mb-6 overflow-visible relative z-20">
 
-      <!-- Quality range -->
-      <div class="flex items-center gap-2">
-        <span class="hud-label shrink-0">Quality</span>
-        <span class="text-xs font-mono text-cyan-700 w-8 text-right">{{ qualityMin }}</span>
-        <div class="hud-dual-range">
-          <div class="hud-dual-range-track"></div>
-          <div class="hud-dual-range-fill"
-            [style.left.%]="qualityMin / 10"
-            [style.width.%]="(qualityMax - qualityMin) / 10"></div>
-          <input type="range" min="0" [max]="qualityMax" step="10" [(ngModel)]="qualityMin" />
-          <input type="range" [min]="qualityMin" max="1000" step="10" [(ngModel)]="qualityMax" />
-        </div>
-        <span class="text-xs font-mono text-cyan-700 w-12">{{ qualityMax }}</span>
+      <!-- Filter header row -->
+      <div class="flex items-center gap-3 cursor-pointer" (click)="filtersCollapsed = !filtersCollapsed">
+        <span class="material-icons text-[14px] text-cyan-700 transition-transform duration-150"
+          [class]="filtersCollapsed ? '' : 'rotate-90'">chevron_right</span>
+        <span class="hud-label">// Filters</span>
+        @if (hasActiveFilter) {
+          <span class="text-xs text-cyan-400 font-mono glow-cyan-sm">active</span>
+        }
+        <div class="flex-1 h-px bg-cyan-900"></div>
+        @if (hasActiveFilter && !filtersCollapsed) {
+          <button (click)="resetFilters(); $event.stopPropagation()" class="hud-toolbar-btn">
+            <span class="material-icons text-[14px]">close</span>
+            Reset
+          </button>
+        }
       </div>
 
-      <!-- Quantity range -->
-      <div class="flex items-center gap-2">
-        <span class="hud-label shrink-0">Quantity</span>
-        <span class="text-xs font-mono text-cyan-700 w-8 text-right">{{ qtyMin }}</span>
-        <div class="hud-dual-range">
-          <div class="hud-dual-range-track"></div>
-          <div class="hud-dual-range-fill"
-            [style.left.%]="qtyMin"
-            [style.width.%]="qtyMax - qtyMin"></div>
-          <input type="range" min="0" [max]="qtyMax" step="5" [(ngModel)]="qtyMin" />
-          <input type="range" [min]="qtyMin" max="100" step="5" [(ngModel)]="qtyMax" />
-        </div>
-        <span class="text-xs font-mono text-cyan-700 w-12">{{ qtyMax }}</span>
-      </div>
+      <!-- Collapsible body -->
+      @if (!filtersCollapsed) {
+        <div class="flex flex-col gap-3 mt-3">
 
-      <!-- Reset -->
-      @if (hasActiveFilter) {
-        <button (click)="resetFilters()" class="hud-toolbar-btn ml-auto">
-          <span class="material-icons text-[14px]">close</span>
-          Reset
-        </button>
+          <!-- Quality row -->
+          <div class="flex items-center gap-2">
+            <span class="hud-label w-16 shrink-0">Quality</span>
+            <span class="text-xs font-mono text-cyan-700 w-8 text-right shrink-0">{{ qualityMin }}</span>
+            <div class="hud-dual-range">
+              <div class="hud-dual-range-track"></div>
+              <div class="hud-dual-range-fill"
+                [style.left.%]="qualityMin / 10"
+                [style.width.%]="(qualityMax - qualityMin) / 10"></div>
+              <input type="range" min="0" [max]="qualityMax" step="10" [(ngModel)]="qualityMin" />
+              <input type="range" [min]="qualityMin" max="1000" step="10" [(ngModel)]="qualityMax" />
+            </div>
+            <span class="text-xs font-mono text-cyan-700 w-12 shrink-0">{{ qualityMax }}</span>
+            <div class="flex items-center gap-1 ml-2">
+              @for (threshold of qualityShortcuts; track threshold) {
+                <button (click)="setQualityMin(threshold)"
+                  class="text-xs font-mono px-1.5 py-0.5 border transition-colors cursor-pointer"
+                  [class]="qualityMin === threshold && qualityMax === 1000
+                    ? 'border-cyan-500 text-cyan-300 bg-cyan-950'
+                    : 'border-cyan-900 text-cyan-700 hover:border-cyan-600 hover:text-cyan-400'">
+                  {{ threshold }}+
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Quantity row -->
+          <div class="flex items-center gap-2">
+            <span class="hud-label w-16 shrink-0">Quantity</span>
+            <span class="text-xs font-mono text-cyan-700 w-8 text-right shrink-0">{{ qtyMin }}</span>
+            <div class="hud-dual-range">
+              <div class="hud-dual-range-track"></div>
+              <div class="hud-dual-range-fill"
+                [style.left.%]="qtyMin"
+                [style.width.%]="qtyMax - qtyMin"></div>
+              <input type="range" min="0" [max]="qtyMax" step="5" [(ngModel)]="qtyMin" />
+              <input type="range" [min]="qtyMin" max="100" step="5" [(ngModel)]="qtyMax" />
+            </div>
+            <span class="text-xs font-mono text-cyan-700 w-12 shrink-0">{{ qtyMax }}</span>
+          </div>
+
+          <!-- Material row -->
+          <div class="flex items-center gap-2">
+            <span class="hud-label w-16 shrink-0">Material</span>
+            <span class="w-8 shrink-0"></span>
+            <div class="relative" #matDropRef>
+              <button (click)="openMaterialDropdown($event)" class="hud-toolbar-btn gap-2">
+                <span class="material-icons text-[14px]">filter_list</span>
+                @if (selectedMaterials.size === 0) { All } @else { {{ selectedMaterials.size }} selected }
+              </button>
+              @if (matDropPos) {
+                <div class="fixed z-[9999] bg-[#091525] border border-[#0d2a40] py-2 min-w-[14rem] max-h-64 overflow-y-auto"
+                     [style.top.px]="matDropPos.top" [style.left.px]="matDropPos.left">
+                  @for (mat of availableMaterials; track mat) {
+                    <label class="flex items-center gap-2 px-3 py-1.5 cursor-pointer hover:bg-cyan-950 transition-colors group"
+                           (click)="toggleMaterialFilter(mat)">
+                      <span class="shrink-0 w-3.5 h-3.5 border flex items-center justify-center transition-colors"
+                        [class]="isMaterialFiltered(mat) ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : 'border-cyan-800 group-hover:border-cyan-600'">
+                        @if (isMaterialFiltered(mat)) {
+                          <svg viewBox="0 0 10 10" class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2"/></svg>
+                        }
+                      </span>
+                      <span class="text-xs tracking-wide"
+                        [class]="isMaterialFiltered(mat) ? 'text-cyan-300' : 'text-cyan-700 group-hover:text-cyan-500'">
+                        {{ materialName(mat) }}
+                      </span>
+                    </label>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+        </div>
       }
     </div>
   }
