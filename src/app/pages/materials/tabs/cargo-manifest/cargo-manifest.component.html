@@ -14,6 +14,34 @@
     <input #importInput type="file" accept=".json" class="hidden" (change)="onImportFile($event)" />
   </div>
 
+  <!-- Import mode modal -->
+  @if (showImportModal) {
+    <div class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center px-4"
+         (click)="showImportModal = false">
+      <div class="panel p-0 w-full max-w-sm" (click)="$event.stopPropagation()">
+        <div class="flex items-center justify-between border-b border-hud-dim px-5 py-3">
+          <span class="text-xs tracking-widest uppercase text-hud-accent">// Import {{ pendingImportData().length }} record{{ pendingImportData().length === 1 ? '' : 's' }}</span>
+          <button (click)="showImportModal = false" class="hud-btn-ghost text-base leading-none px-2 py-0.5">✕</button>
+        </div>
+        <div class="p-5 space-y-4">
+          <p class="text-sm text-hud-body">How should the imported data be applied?</p>
+          <div class="grid grid-cols-2 gap-3">
+            <button (click)="confirmImport('merge')"
+                    class="flex flex-col gap-1 p-3 border border-hud-dim hover:border-hud-accent hover:text-hud-primary transition-colors text-left">
+              <span class="text-xs tracking-widest uppercase text-hud-accent font-bold">Merge</span>
+              <span class="text-xs text-hud-ghost">Add to existing records</span>
+            </button>
+            <button (click)="confirmImport('replace')"
+                    class="flex flex-col gap-1 p-3 border border-hud-dim hover:border-hud-error hover:text-hud-primary transition-colors text-left">
+              <span class="text-xs tracking-widest uppercase text-hud-error font-bold">Replace</span>
+              <span class="text-xs text-hud-ghost">Overwrite all current records</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
   <!-- Filter panel -->
   @if (records.length > 0) {
     <div class="bg-(--surface) border border-(--panel-border) px-4 py-3 mb-6 overflow-visible relative z-20">
@@ -216,7 +244,11 @@
                     }
                   </td>
                   <td class="px-4 py-2.5 text-hud-data font-mono border-x border-hud-dim/40">{{ g.totalQty }}</td>
-                  <td class="px-4 py-2.5"></td>
+                  <td class="px-4 py-2.5" (click)="$event.stopPropagation()">
+                    <div class="flex items-center justify-end">
+                      <button (click)="onRemoveGroup(g)" class="hud-btn-delete" title="Delete all {{ materialName(g.material) }} records">&times;</button>
+                    </div>
+                  </td>
                 </tr>
                 <!-- Expanded individual records -->
                 @if (isGroupExpanded(loc, g.material)) {

@@ -13,7 +13,7 @@
     <p class="text-hud-muted text-xs tracking-widest uppercase mb-4">// No stations selected — all locations are shown</p>
   }
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    @for (sys of filter.systems; track sys) {
+    @for (sys of filter.systems(); track sys) {
       <div class="panel p-4">
         <!-- System header / toggle all -->
         <div class="flex items-center gap-2 mb-3 pb-2 border-b border-hud-dim cursor-pointer group"

@@ -1,9 +1,10 @@
-import { Component, OnInit, inject, ElementRef, ViewChild, ChangeDetectorRef, HostListener } from '@angular/core';
+import { Component, OnInit, inject, ElementRef, ViewChild, ChangeDetectorRef, HostListener, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { materials, Material } from '../../../../data/materials';
 import { locations, Location } from '../../../../data/locations';
 import { MaterialStorageService } from '../../../../services/material-storage.service';
 import { StationFilterService } from '../../../../services/station-filter.service';
+import { CustomLocationService } from '../../../../services/custom-location.service';
 import { MaterialRecord } from '../../../../models/material-record';
 
 interface MaterialGroup {
@@ -26,6 +27,7 @@ export class CargoManifestComponent implements OnInit {
   readonly allLocations: Location[] = locations;
   private storage = inject(MaterialStorageService);
   private filter = inject(StationFilterService);
+  private customLocSvc = inject(CustomLocationService);
   private cdr = inject(ChangeDetectorRef);
 
   get transferLocations(): Location[] {
@@ -34,7 +36,6 @@ export class CargoManifestComponent implements OnInit {
     return this.allLocations.filter(l => active.has(l.name));
   }
 
-  records: MaterialRecord[] = [];
   activeUseId: string | null = null;
   useAmount = 0;
 
@@ -111,9 +112,9 @@ export class CargoManifestComponent implements OnInit {
 
   get selectedCount(): number { return this.selectedIds.size; }
 
-  ngOnInit(): void {
-    this.records = this.storage.getAll();
-  }
+  ngOnInit(): void { /* records are now live via the storage signal */ }
+
+  get records(): MaterialRecord[] { return this.storage.records(); }
 
   get usedLocations(): string[] {
     return [...new Set(this.filteredRecords.map(r => r.location))].sort();
@@ -195,8 +196,16 @@ export class CargoManifestComponent implements OnInit {
 
   onRemove(id: string): void {
     this.storage.remove(id);
-    this.records = this.storage.getAll();
     if (this.activeUseId === id) this.activeUseId = null;
+  }
+
+  onRemoveGroup(g: MaterialGroup): void {
+    g.records.forEach(r => {
+      this.storage.remove(r.id);
+      this.selectedIds.delete(r.id);
+      if (this.activeUseId === r.id) this.activeUseId = null;
+    });
+    this.selectedIds = new Set(this.selectedIds);
   }
 
   onOpenUse(r: MaterialRecord): void {
@@ -220,7 +229,6 @@ export class CargoManifestComponent implements OnInit {
     } else {
       this.storage.updateQuantity(r.id, remaining);
     }
-    this.records = this.storage.getAll();
     this.activeUseId = null;
   }
 
@@ -251,6 +259,9 @@ export class CargoManifestComponent implements OnInit {
     this.importInput.nativeElement.click();
   }
 
+  pendingImportData = signal<MaterialRecord[]>([]);
+  showImportModal = false;
+
   onImportFile(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
@@ -259,16 +270,37 @@ export class CargoManifestComponent implements OnInit {
       try {
         const data = JSON.parse(reader.result as string) as MaterialRecord[];
         if (!Array.isArray(data)) return;
-        data.forEach(r => {
-          if (r.material && r.location && r.quantity != null && r.quality != null) {
-            this.storage.add({ material: r.material, quality: r.quality, quantity: r.quantity, location: r.location });
-          }
-        });
-        this.records = this.storage.getAll();
+        const valid = data.filter(
+          r => r.material && r.location && r.quantity != null && r.quality != null
+        );
+        if (valid.length === 0) return;
+        this.pendingImportData.set(valid);
+        this.showImportModal = true;
         this.cdr.detectChanges();
       } catch { /* invalid file, silently ignore */ }
     };
     reader.readAsText(file);
+  }
+
+  confirmImport(mode: 'replace' | 'merge'): void {
+    const data = this.pendingImportData();
+
+    // Register any location names not already known as custom locations
+    const knownNames = new Set(this.filter.allLocations().map(l => l.name));
+    const uniqueNewLocs = [...new Set(data.map(r => r.location))]
+      .filter(name => !knownNames.has(name));
+    uniqueNewLocs.forEach(name => this.customLocSvc.add(name, 'custom', false));
+
+    if (mode === 'replace') {
+      this.storage.replaceAll(data);
+    } else {
+      data.forEach(r => this.storage.add(
+        { material: r.material, quality: r.quality, quantity: r.quantity, location: r.location }
+      ));
+    }
+    this.showImportModal = false;
+    this.pendingImportData.set([]);
+    this.cdr.detectChanges();
   }
 
   toggleSelect(id: string): void {
@@ -312,7 +344,6 @@ export class CargoManifestComponent implements OnInit {
   onTransfer(): void {
     if (!this.transferDestination || this.selectedIds.size === 0) return;
     this.storage.updateLocation([...this.selectedIds], this.transferDestination);
-    this.records = this.storage.getAll();
     this.selectedIds = new Set();
     this.transferDestination = '';
   }
