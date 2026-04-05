@@ -14,6 +14,8 @@ export class CargoManifestComponent implements OnInit {
   private storage = inject(MaterialStorageService);
 
   records: MaterialRecord[] = [];
+  activeUseId: string | null = null;
+  useAmount = 0;
 
   ngOnInit(): void {
     this.records = this.storage.getAll();
@@ -38,5 +40,30 @@ export class CargoManifestComponent implements OnInit {
   onRemove(id: string): void {
     this.storage.remove(id);
     this.records = this.storage.getAll();
+    if (this.activeUseId === id) this.activeUseId = null;
+  }
+
+  onOpenUse(r: MaterialRecord): void {
+    if (this.activeUseId === r.id) {
+      this.activeUseId = null;
+      return;
+    }
+    this.activeUseId = r.id;
+    this.useAmount = 0;
+  }
+
+  onCancelUse(): void {
+    this.activeUseId = null;
+  }
+
+  onConfirmUse(r: MaterialRecord): void {
+    const remaining = r.quantity - this.useAmount;
+    if (remaining <= 0) {
+      this.storage.remove(r.id);
+    } else {
+      this.storage.updateQuantity(r.id, remaining);
+    }
+    this.records = this.storage.getAll();
+    this.activeUseId = null;
   }
 }

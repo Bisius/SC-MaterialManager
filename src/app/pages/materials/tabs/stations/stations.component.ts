@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { StationFilterService } from '../../../../services/station-filter.service';
 
 @Component({
@@ -8,4 +8,5 @@ import { StationFilterService } from '../../../../services/station-filter.servic
 })
 export class StationsComponent {
   readonly filter = inject(StationFilterService);
+  readonly refineryOnly = signal(false);
 }

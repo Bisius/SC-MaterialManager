@@ -40,7 +40,7 @@ export const locations: Location[] = [
 	{ name: 'ARC-L5',           system: 'Stanton', type: LocationType.Station, refinery: false },
 
 	// Hurston
-	{ name: 'Loreville',        system: 'Stanton', type: LocationType.City,    refinery: false },
+	{ name: 'Lorville',         system: 'Stanton', type: LocationType.City,    refinery: false },
 	{ name: 'Everus Harbor',    system: 'Stanton', type: LocationType.Station, refinery: false },
 	{ name: 'HUR-L1',           system: 'Stanton', type: LocationType.Station, refinery: true  },
 	{ name: 'HUR-L2',           system: 'Stanton', type: LocationType.Station, refinery: false },

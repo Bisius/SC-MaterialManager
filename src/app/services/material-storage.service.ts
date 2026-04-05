@@ -29,6 +29,11 @@ export class MaterialStorageService {
     this.save(records);
   }
 
+  updateQuantity(id: string, newQuantity: number): void {
+    const records = this.getAll().map(r => r.id === id ? { ...r, quantity: newQuantity } : r);
+    this.save(records);
+  }
+
   private save(records: MaterialRecord[]): void {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
   }
