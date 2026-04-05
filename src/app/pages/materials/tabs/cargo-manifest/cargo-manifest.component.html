@@ -1,4 +1,20 @@
 <section class="max-w-5xl">
+  <!-- Export / Import toolbar -->
+  <div class="flex items-center gap-2 mb-5">
+    <span class="text-cyan-500 text-sm tracking-widest uppercase">// Cargo manifest</span>
+    <div class="flex-1 h-px bg-cyan-900"></div>
+    <button (click)="onExport()"
+      class="flex items-center gap-1.5 text-[10px] tracking-widest uppercase transition-colors cursor-pointer px-2 py-1 border border-cyan-900 text-cyan-700 hover:border-cyan-600 hover:text-cyan-400">
+      <span class="material-icons text-[14px]">download</span>
+      Export
+    </button>
+    <button (click)="onImportClick()"
+      class="flex items-center gap-1.5 text-[10px] tracking-widest uppercase transition-colors cursor-pointer px-2 py-1 border border-cyan-900 text-cyan-700 hover:border-cyan-600 hover:text-cyan-400">
+      <span class="material-icons text-[14px]">upload</span>
+      Import
+    </button>
+    <input #importInput type="file" accept=".json" class="hidden" (change)="onImportFile($event)" />
+  </div>
   @if (records.length === 0) {
     <div class="panel p-8 text-center">
       <p class="text-cyan-800 text-xs tracking-widest uppercase">// No records found. Cargo manifest is empty.</p>

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { materials, Material } from '../../../../data/materials';
 import { locations, Location } from '../../../../data/locations';
@@ -18,6 +18,7 @@ export class CargoManifestComponent implements OnInit {
   readonly allLocations: Location[] = locations;
   private storage = inject(MaterialStorageService);
   private filter = inject(StationFilterService);
+  private cdr = inject(ChangeDetectorRef);
 
   get transferLocations(): Location[] {
     const active = this.filter.activeStations();
@@ -83,6 +84,45 @@ export class CargoManifestComponent implements OnInit {
     }
     this.records = this.storage.getAll();
     this.activeUseId = null;
+  }
+
+  @ViewChild('importInput') importInput!: ElementRef<HTMLInputElement>;
+
+  onExport(): void {
+    const exportData = this.records.map(({ id: _id, ...rest }) => rest);
+    const json = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `cargo-manifest-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  onImportClick(): void {
+    this.importInput.nativeElement.value = '';
+    this.importInput.nativeElement.click();
+  }
+
+  onImportFile(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result as string) as MaterialRecord[];
+        if (!Array.isArray(data)) return;
+        data.forEach(r => {
+          if (r.material && r.location && r.quantity != null && r.quality != null) {
+            this.storage.add({ material: r.material, quality: r.quality, quantity: r.quantity, location: r.location });
+          }
+        });
+        this.records = this.storage.getAll();
+        this.cdr.detectChanges();
+      } catch { /* invalid file, silently ignore */ }
+    };
+    reader.readAsText(file);
   }
 
   toggleSelect(id: string): void {
