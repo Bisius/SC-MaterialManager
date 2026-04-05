@@ -6,6 +6,14 @@ import { MaterialStorageService } from '../../../../services/material-storage.se
 import { StationFilterService } from '../../../../services/station-filter.service';
 import { MaterialRecord } from '../../../../models/material-record';
 
+interface MaterialGroup {
+  material: string;
+  qualityMin: number;
+  qualityMax: number;
+  totalQty: number;
+  records: MaterialRecord[];
+}
+
 @Component({
   selector: 'app-cargo-manifest',
   standalone: true,
@@ -32,6 +40,7 @@ export class CargoManifestComponent implements OnInit {
 
   selectedIds = new Set<string>();
   transferDestination = '';
+  expandedGroups = new Set<string>();
 
   get selectedCount(): number { return this.selectedIds.size; }
 
@@ -51,8 +60,66 @@ export class CargoManifestComponent implements OnInit {
     return this.recordsAt(location).reduce((sum, r) => sum + r.quantity, 0);
   }
 
+  materialGroupsAt(location: string): MaterialGroup[] {
+    const byMat = new Map<string, MaterialRecord[]>();
+    for (const r of this.recordsAt(location)) {
+      const g = byMat.get(r.material) ?? [];
+      g.push(r);
+      byMat.set(r.material, g);
+    }
+    return [...byMat.entries()]
+      .map(([mat, recs]) => ({
+        material: mat,
+        qualityMin: Math.min(...recs.map(r => r.quality)),
+        qualityMax: Math.max(...recs.map(r => r.quality)),
+        totalQty: recs.reduce((s, r) => s + r.quantity, 0),
+        records: [...recs].sort((a, b) => b.quality - a.quality),
+      }))
+      .sort((a, b) => this.materialName(a.material).localeCompare(this.materialName(b.material)));
+  }
+
+  private groupKey(location: string, material: string): string {
+    return `${location}|${material}`;
+  }
+
+  toggleGroup(location: string, material: string): void {
+    const key = this.groupKey(location, material);
+    this.expandedGroups.has(key) ? this.expandedGroups.delete(key) : this.expandedGroups.add(key);
+    this.expandedGroups = new Set(this.expandedGroups);
+  }
+
+  isGroupExpanded(location: string, material: string): boolean {
+    return this.expandedGroups.has(this.groupKey(location, material));
+  }
+
+  isGroupFullySelected(group: MaterialGroup): boolean {
+    return group.records.length > 0 && group.records.every(r => this.selectedIds.has(r.id));
+  }
+
+  isGroupPartiallySelected(group: MaterialGroup): boolean {
+    return group.records.some(r => this.selectedIds.has(r.id)) && !group.records.every(r => this.selectedIds.has(r.id));
+  }
+
+  toggleGroupSelection(group: MaterialGroup): void {
+    const next = new Set(this.selectedIds);
+    if (this.isGroupFullySelected(group)) {
+      group.records.forEach(r => next.delete(r.id));
+    } else {
+      group.records.forEach(r => next.add(r.id));
+    }
+    this.selectedIds = next;
+  }
+
   materialName(short: string): string {
     return this.allMaterials.find(m => m.short === short)?.name ?? short;
+  }
+
+  qualityFill(quality: number): string {
+    return `${Math.min(Math.max(quality / 10, 0), 100)}%`;
+  }
+
+  qtyFill(quantity: number): string {
+    return `${Math.min(Math.max(quantity, 0), 100)}%`;
   }
 
   onRemove(id: string): void {

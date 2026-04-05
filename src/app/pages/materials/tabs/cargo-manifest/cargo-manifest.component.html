@@ -60,7 +60,7 @@
               <span class="text-sm font-bold tracking-[0.2em] uppercase text-cyan-300">{{ loc }}</span>
             </div>
             <span class="text-xs tracking-widest uppercase text-cyan-700">
-              {{ recordsAt(loc).length }} record(s) &nbsp;|&nbsp; {{ totalScu(loc) }} cSCU total
+              {{ materialGroupsAt(loc).length }} material(s) &nbsp;·&nbsp; {{ recordsAt(loc).length }} record(s) &nbsp;|&nbsp; {{ totalScu(loc) }} cSCU total
             </span>
           </div>
           <!-- Records table -->
@@ -70,60 +70,107 @@
                 <th class="px-4 py-2 w-8"></th>
                 <th class="hud-th">Material</th>
                 <th class="hud-th">Quality</th>
-                <th class="hud-th">Qty (cSCU)</th>
-                <th class="px-4 py-2"></th>
+                <th class="hud-th">Quantity (cSCU)</th>
+                <th class="px-4 py-2 w-28"></th>
               </tr>
             </thead>
             <tbody>
-              @for (r of recordsAt(loc); track r.id; let odd = $odd) {
-                <tr [class]="odd ? 'bg-[#040c18] border-b border-cyan-950' : 'bg-[#060f1e] border-b border-cyan-950'"
-                    class="hover:bg-cyan-950 transition-colors">
-                  <td class="px-4 py-2.5">
-                    <span (click)="toggleSelect(r.id)"
+              @for (g of materialGroupsAt(loc); track g.material; let odd = $odd) {
+                <!-- Group summary row -->
+                <tr class="border-b border-cyan-900 cursor-pointer hover:bg-cyan-950 transition-colors"
+                    [class]="odd ? 'bg-[#040c18]' : 'bg-[#060f1e]'"
+                    (click)="toggleGroup(loc, g.material)">
+                  <td class="px-4 py-2.5" (click)="$event.stopPropagation()">
+                    <span (click)="toggleGroupSelection(g)"
                       class="shrink-0 cursor-pointer w-3.5 h-3.5 border flex items-center justify-center transition-colors"
-                      [class]="isSelected(r.id) ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : 'border-cyan-800 hover:border-cyan-600'">
-                      @if (isSelected(r.id)) {
+                      [class]="isGroupFullySelected(g) ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : isGroupPartiallySelected(g) ? 'border-cyan-400 bg-cyan-900' : 'border-cyan-800 hover:border-cyan-600'">
+                      @if (isGroupFullySelected(g)) {
                         <svg viewBox="0 0 10 10" class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2"/></svg>
+                      } @else if (isGroupPartiallySelected(g)) {
+                        <span class="w-1.5 h-1.5 bg-cyan-400 block"></span>
                       }
                     </span>
                   </td>
-                  <td class="px-4 py-2.5 text-cyan-300 font-bold tracking-wide">{{ materialName(r.material) }}</td>
-                  <td class="px-4 py-2.5 text-slate-300 font-mono">{{ r.quality }}</td>
-                  <td class="px-4 py-2.5 text-slate-300 font-mono">{{ r.quantity }}</td>
-                  <td class="px-4 py-2.5">
-                    <div class="flex items-center justify-end gap-2">
-                      <button (click)="onOpenUse(r)"
-                        class="hud-btn-use"
-                        [class]="activeUseId === r.id ? 'border-cyan-400 text-cyan-900 bg-cyan-400' : 'border-cyan-900 text-cyan-700 hover:border-cyan-600 hover:text-cyan-400'">
-                        USE
-                      </button>
-                      <button (click)="onRemove(r.id)" class="hud-btn-delete">
-                        &times;
-                      </button>
+                  <td class="px-4 py-2.5 text-cyan-300 font-bold tracking-wide">
+                    <div class="flex items-center gap-2">
+                      <span class="material-icons text-[14px] transition-transform duration-150"
+                        [class]="isGroupExpanded(loc, g.material) ? 'rotate-90' : ''">chevron_right</span>
+                      {{ materialName(g.material) }}
+                      @if (g.records.length > 1) {
+                        <span class="text-xs text-cyan-700 font-normal font-mono">&times;{{ g.records.length }}</span>
+                      }
                     </div>
                   </td>
+                  <td class="px-4 py-2.5 text-slate-400 font-mono text-sm border-x border-cyan-900/40">
+                    @if (g.qualityMin === g.qualityMax) {
+                      {{ g.qualityMin }}
+                    } @else {
+                      {{ g.qualityMin }}&thinsp;&ndash;&thinsp;{{ g.qualityMax }}
+                    }
+                  </td>
+                  <td class="px-4 py-2.5 text-slate-300 font-mono border-x border-cyan-900/40">{{ g.totalQty }}</td>
+                  <td class="px-4 py-2.5"></td>
                 </tr>
-                @if (activeUseId === r.id) {
-                  <tr class="bg-[#040c18] border-b border-cyan-800">
-                    <td colspan="5" class="px-4 py-3">
-                      <div class="flex items-center gap-3">
-                        <span class="text-xs tracking-widest uppercase text-cyan-600">Amount used (cSCU)</span>
-                        <input type="number" min="0" [max]="r.quantity"
-                          [value]="useAmount"
-                          (input)="useAmount = +$any($event.target).value"
-                          class="sci-input w-28 text-sm" />
-                        <span class="text-xs text-cyan-800 font-mono">
-                          → {{ r.quantity - useAmount < 0 ? 0 : r.quantity - useAmount }} cSCU remaining
+                <!-- Expanded individual records -->
+                @if (isGroupExpanded(loc, g.material)) {
+                  @for (r of g.records; track r.id) {
+                    <tr class="bg-[#030a14] border-b border-cyan-950 hover:bg-[#071018] transition-colors">
+                      <td class="px-4 py-2">
+                        <span (click)="toggleSelect(r.id)"
+                          class="shrink-0 cursor-pointer w-3.5 h-3.5 border flex items-center justify-center transition-colors"
+                          [class]="isSelected(r.id) ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : 'border-cyan-800 hover:border-cyan-600'">
+                          @if (isSelected(r.id)) {
+                            <svg viewBox="0 0 10 10" class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2"/></svg>
+                          }
                         </span>
-                        <button (click)="onConfirmUse(r)" class="hud-btn-primary h-7">
-                          CONFIRM
-                        </button>
-                        <button (click)="onCancelUse()" class="hud-btn-ghost h-7">
-                          CANCEL
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                      </td>
+                      <td class="pl-8 pr-4 py-2 text-cyan-500 font-bold tracking-wide text-sm">
+                        <span class="text-cyan-800 font-mono text-xs mr-1">└─</span>{{ materialName(r.material) }}
+                      </td>
+                      <td class="relative p-0 border-x border-cyan-900/40">
+                        <div class="absolute inset-0 bg-cyan-400/10" [style.width]="qualityFill(r.quality)"></div>
+                        <span class="relative font-mono text-slate-300 text-sm px-3 py-2 block">{{ r.quality }}</span>
+                      </td>
+                      <td class="relative p-0 border-x border-cyan-900/40">
+                        <div class="absolute inset-0 bg-cyan-400/10" [style.width]="qtyFill(r.quantity)"></div>
+                        <span class="relative font-mono text-slate-300 text-sm px-3 py-2 block">{{ r.quantity }}</span>
+                      </td>
+                      <td class="px-4 py-2">
+                        <div class="flex items-center justify-end gap-2">
+                          <button (click)="onOpenUse(r)"
+                            class="hud-btn-use"
+                            [class]="activeUseId === r.id ? 'border-cyan-400 text-cyan-900 bg-cyan-400' : 'border-cyan-900 text-cyan-700 hover:border-cyan-600 hover:text-cyan-400'">
+                            USE
+                          </button>
+                          <button (click)="onRemove(r.id)" class="hud-btn-delete">
+                            &times;
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    @if (activeUseId === r.id) {
+                      <tr class="bg-[#040c18] border-b border-cyan-800">
+                        <td colspan="5" class="px-4 py-3">
+                          <div class="flex items-center gap-3">
+                            <span class="text-xs tracking-widest uppercase text-cyan-600">Amount used (cSCU)</span>
+                            <input type="number" min="0" [max]="r.quantity"
+                              [value]="useAmount"
+                              (input)="useAmount = +$any($event.target).value"
+                              class="sci-input w-28 text-sm" />
+                            <span class="text-xs text-cyan-800 font-mono">
+                              → {{ r.quantity - useAmount < 0 ? 0 : r.quantity - useAmount }} cSCU remaining
+                            </span>
+                            <button (click)="onConfirmUse(r)" class="hud-btn-primary h-7">
+                              CONFIRM
+                            </button>
+                            <button (click)="onCancelUse()" class="hud-btn-ghost h-7">
+                              CANCEL
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  }
                 }
               }
             </tbody>

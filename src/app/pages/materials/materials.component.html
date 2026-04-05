@@ -9,23 +9,23 @@
         SC Material Manager
       </h1>
     </div>
-    <p class="text-xs tracking-widest text-cyan-800 uppercase ml-5">// Mining cargo tracking system v1.0</p>
+    <p class="text-xs tracking-widest text-cyan-800 uppercase ml-5">// Crafting materials tracking system v1.0</p>
   </header>
 
   <!-- Tab Bar -->
   <nav class="flex gap-0 mb-6">
-    <button (click)="activeTab = 'stations'"
+    <button (click)="setTab('stations')"
       [class]="activeTab === 'stations' ? 'hud-tab hud-tab-active' : 'hud-tab hud-tab-inactive'">
       [ STATIONS ]
       @if (activeStationCount > 0) {
         <span class="ml-1 text-cyan-400 glow-cyan-sm">{{ activeStationCount }}</span>
       }
     </button>
-    <button (click)="activeTab = 'add'"
+    <button (click)="setTab('add')"
       [class]="activeTab === 'add' ? 'hud-tab hud-tab-active' : 'hud-tab hud-tab-inactive'">
       [ ADD MATERIAL ]
     </button>
-    <button (click)="activeTab = 'list'"
+    <button (click)="setTab('list')"
       [class]="activeTab === 'list' ? 'hud-tab hud-tab-active' : 'hud-tab hud-tab-inactive'">
       [ CARGO MANIFEST ]
       @if (recordCount > 0) {
