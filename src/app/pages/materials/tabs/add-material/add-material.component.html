@@ -15,7 +15,7 @@
         }
       </select>
       @if (materialCtrl.invalid && materialCtrl.touched) {
-        <span class="text-red-400 text-xs tracking-widest uppercase">! REQUIRED</span>
+        <span class="text-hud-error text-xs tracking-widest uppercase">! REQUIRED</span>
       }
     </div>
 
@@ -25,7 +25,7 @@
       <input type="number" formControlName="quality" min="0" max="1000" placeholder="0 - 1000"
         class="sci-input" />
       @if (qualityCtrl.invalid && qualityCtrl.touched) {
-        <span class="text-red-400 text-xs tracking-widest uppercase">! VALUE 0 - 1000</span>
+        <span class="text-hud-error text-xs tracking-widest uppercase">! VALUE 0 - 1000</span>
       }
     </div>
 
@@ -35,7 +35,7 @@
       <input type="number" formControlName="quantity" min="0" placeholder="cSCU"
         class="sci-input" />
       @if (quantityCtrl.invalid && quantityCtrl.touched) {
-        <span class="text-red-400 text-xs tracking-widest uppercase">! POSITIVE VALUE REQUIRED</span>
+        <span class="text-hud-error text-xs tracking-widest uppercase">! POSITIVE VALUE REQUIRED</span>
       }
     </div>
 
@@ -45,7 +45,7 @@
       <select formControlName="location" class="sci-input">
         <option value="" disabled>-- SELECT LOCATION --</option>
         @if (filter.activeStationCount() > 0) {
-          <option value="" disabled class="text-cyan-700">-- {{ filter.activeStationCount() }} ACTIVE STATIONS --</option>
+          <option value="" disabled class="text-hud-muted">-- {{ filter.activeStationCount() }} ACTIVE STATIONS --</option>
         }
         @for (sys of filter.filteredSystems(); track sys) {
           <optgroup [label]="'[ ' + sys + ' ]'">
@@ -56,7 +56,7 @@
         }
       </select>
       @if (locationCtrl.invalid && locationCtrl.touched) {
-        <span class="text-red-400 text-xs tracking-widest uppercase">! REQUIRED</span>
+        <span class="text-hud-error text-xs tracking-widest uppercase">! REQUIRED</span>
       }
     </div>
 
@@ -64,18 +64,18 @@
     <div class="sm:col-span-2 flex items-center justify-between pt-2">
       <label class="flex items-center gap-2 cursor-pointer group" (click)="goToManifest.update(v => !v)">
         <span class="w-3.5 h-3.5 border flex items-center justify-center shrink-0 transition-colors"
-          [class]="goToManifest() ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : 'border-cyan-800 group-hover:border-cyan-600'">
+          [class]="goToManifest() ? 'border-hud-accent bg-hud-accent glow-cyan-sm' : 'border-hud-ghost group-hover:border-hud-secondary'">
           @if (goToManifest()) {
             <svg viewBox="0 0 10 10" class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2"/></svg>
           }
         </span>
         <span class="text-xs tracking-widest uppercase"
-          [class]="goToManifest() ? 'text-cyan-400' : 'text-cyan-700 group-hover:text-cyan-500'">
+          [class]="goToManifest() ? 'text-hud-accent' : 'text-hud-muted group-hover:text-hud-mid'">
           Show manifest after adding
         </span>
       </label>
       <button type="submit"
-        class="px-8 py-2.5 text-xs font-bold tracking-[0.2em] uppercase text-cyan-300 border border-cyan-500 bg-[#040c18] hover:bg-cyan-950 hover:text-white glow-cyan transition-all cursor-pointer"
+        class="px-8 py-2.5 text-xs font-bold tracking-[0.2em] uppercase text-hud-primary border border-hud-mid bg-(--bg-base) hover:bg-hud-deep hover:text-white glow-cyan transition-all cursor-pointer"
         style="clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)">
         &gt;&gt; SUBMIT RECORD
       </button>

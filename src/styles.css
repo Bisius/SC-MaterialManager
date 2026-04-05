@@ -2,12 +2,50 @@
 
 /* ── Sci-fi custom tokens ─────────────────────────────────────── */
 :root {
-  --cyan:      #00e5ff;
-  --cyan-dim:  #0097a7;
-  --red-alert: #ff1744;
-  --panel-bg:  #060e1c;
+  /* Brand colours */
+  --cyan:         #00e5ff;
+  --cyan-dim:     #0097a7;
+  --red-alert:    #ff1744;
+
+  /* Surface hierarchy (darkest → lightest) */
+  --bg-deep:      #030a14;   /* expanded record rows */
+  --bg-base:      #040c18;   /* inputs, scrollbar track, deep panels */
+  --bg-row-odd:   #040c18;   /* group row — odd */
+  --bg-row-even:  #060f1e;   /* group row — even */
+  --bg-hover:     #071018;   /* hover on record rows */
+  --panel-bg:     #060e1c;   /* page background */
+  --surface:      #091525;   /* panel / filter box surface */
+
+  /* Borders */
   --panel-border: #0d2a40;
-  --surface:   #091525;
+}
+
+/* ── Semantic colour palette ─────────────────────────────────── */
+/*
+  Usage: text-hud-primary, bg-hud-accent, border-hud-dim, etc.
+  All standard Tailwind modifiers work: hover:, group-hover:, /opacity
+*/
+@theme inline {
+  /* Cyan semantic scale (light → dark) */
+  --color-hud-primary:        var(--color-cyan-300);  /* active/selected text  */
+  --color-hud-accent:         var(--color-cyan-400);  /* badges, icons, active fills */
+  --color-hud-mid:            var(--color-cyan-500);  /* section titles, partial states */
+  --color-hud-secondary:      var(--color-cyan-600);  /* secondary labels, hover borders */
+  --color-hud-muted:          var(--color-cyan-700);  /* dim labels, button defaults */
+  --color-hud-ghost:          var(--color-cyan-800);  /* very dim / inactive */
+  --color-hud-dim:            var(--color-cyan-900);  /* dividers, dark partial-select bg */
+  --color-hud-deep:           var(--color-cyan-950);  /* row hover bg */
+
+  /* Neutral / data */
+  --color-hud-body:           var(--color-slate-100); /* page body text */
+  --color-hud-data:           var(--color-slate-300); /* table cell values */
+  --color-hud-data-dim:       var(--color-slate-400); /* dimmer table values */
+
+  /* Danger / error */
+  --color-hud-error:          var(--color-red-400);   /* validation error text */
+  --color-hud-danger-hover:   var(--color-red-500);   /* delete btn border:hover */
+  --color-hud-danger:         var(--color-red-600);   /* delete btn text */
+  --color-hud-danger-border:  var(--color-red-900);   /* delete btn border */
 }
 
 /* ── Background grid ──────────────────────────────────────────── */
@@ -42,8 +80,8 @@ body {
 
 /* ── Sci-fi input / select ───────────────────────────────────── */
 .sci-input {
-  background: #040c18;
-  border: 1px solid #0d2a40;
+  background: var(--bg-base);
+  border: 1px solid var(--panel-border);
   color: var(--cyan);
   height: 2.5rem;
   padding: 0 0.75rem;
@@ -58,13 +96,13 @@ body {
 }
 .sci-input option,
 .sci-input optgroup {
-  background: #060e1c;
+  background: var(--panel-bg);
   color: #e0f7fa;
 }
 
 /* ── Scrollbar ───────────────────────────────────────────────── */
 ::-webkit-scrollbar       { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #040c18; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
 ::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 3px; }
 
 /* ── Dual-handle range slider ─────────────────────────── */
@@ -79,7 +117,7 @@ body {
   position: absolute;
   left: 0; right: 0;
   height: 2px;
-  background: #0d2a40;
+  background: var(--panel-border);
 }
 .hud-dual-range-fill {
   position: absolute;
@@ -119,37 +157,37 @@ body {
 
 /* Section header row + parts */
 .hud-section       { @apply flex items-center gap-2 mb-5; }
-.hud-section-title { @apply text-cyan-500 text-sm tracking-widest uppercase; }
+.hud-section-title { @apply text-hud-mid text-sm tracking-widest uppercase; }
 .hud-divider       { @apply flex-1 h-px bg-cyan-900; }
 
 /* Form field labels and table header cells */
-.hud-label { @apply text-xs tracking-[0.2em] uppercase text-cyan-600; }
-.hud-th    { @apply px-4 py-2 text-left text-xs tracking-[0.2em] uppercase text-cyan-700 font-normal; }
+.hud-label { @apply text-xs tracking-[0.2em] uppercase text-hud-secondary; }
+.hud-th    { @apply px-4 py-2 text-left text-xs tracking-[0.2em] uppercase text-hud-muted font-normal; }
 
 /* Small ghost toolbar buttons (export, import) */
 .hud-toolbar-btn {
   @apply flex items-center gap-1.5 text-xs tracking-widest uppercase
          transition-colors cursor-pointer px-2 py-1 border
-         border-cyan-900 text-cyan-700 hover:border-cyan-600 hover:text-cyan-400;
+         border-hud-dim text-hud-muted hover:border-hud-secondary hover:text-hud-accent;
 }
 
 /* Action buttons — add height at use-site (h-7 or h-8) */
 .hud-btn-ghost {
   @apply text-xs tracking-widest uppercase px-3 border
-         border-cyan-900 text-cyan-700 hover:border-cyan-700 hover:text-cyan-500
+         border-hud-dim text-hud-muted hover:border-hud-muted hover:text-hud-mid
          transition-colors cursor-pointer;
 }
 .hud-btn-primary {
   @apply text-xs tracking-widest uppercase px-3 border
-         border-cyan-600 text-cyan-300 hover:bg-cyan-900
+         border-hud-secondary text-hud-primary hover:bg-hud-dim
          transition-colors cursor-pointer;
 }
 
 /* Delete (×) icon button */
 .hud-btn-delete {
-  @apply text-sm leading-none text-red-600 hover:text-red-400
+  @apply text-sm leading-none text-hud-danger hover:text-hud-error
          transition-colors cursor-pointer
-         border border-red-900 hover:border-red-500
+         border border-hud-danger-border hover:border-hud-danger-hover
          w-6 h-6 flex items-center justify-center;
 }
 
@@ -165,9 +203,10 @@ body {
          cursor-pointer border border-b-0;
 }
 .hud-tab-active {
-  @apply text-cyan-300 border-cyan-500 bg-[#091525];
+  @apply text-hud-primary border-hud-mid;
+  background: var(--surface);
   box-shadow: 0 0 4px rgba(0,229,255,.35);
 }
 .hud-tab-inactive {
-  @apply text-cyan-800 border-transparent hover:text-cyan-500 transition-colors;
+  @apply text-hud-ghost border-transparent hover:text-hud-mid transition-colors;
 }

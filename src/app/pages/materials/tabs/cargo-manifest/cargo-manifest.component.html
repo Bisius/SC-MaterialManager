@@ -16,17 +16,17 @@
 
   <!-- Filter panel -->
   @if (records.length > 0) {
-    <div class="bg-[#091525] border border-[#0d2a40] px-4 py-3 mb-6 overflow-visible relative z-20">
+    <div class="bg-(--surface) border border-(--panel-border) px-4 py-3 mb-6 overflow-visible relative z-20">
 
       <!-- Filter header row -->
       <div class="flex items-center gap-3 cursor-pointer" (click)="filtersCollapsed = !filtersCollapsed">
-        <span class="material-icons text-[14px] text-cyan-700 transition-transform duration-150"
+        <span class="material-icons text-[14px] text-hud-muted transition-transform duration-150"
           [class]="filtersCollapsed ? '' : 'rotate-90'">chevron_right</span>
         <span class="hud-label">// Filters</span>
         @if (hasActiveFilter) {
-          <span class="text-xs text-cyan-400 font-mono glow-cyan-sm">active</span>
+          <span class="text-xs text-hud-accent font-mono glow-cyan-sm">active</span>
         }
-        <div class="flex-1 h-px bg-cyan-900"></div>
+        <div class="flex-1 h-px bg-hud-dim"></div>
         @if (hasActiveFilter && !filtersCollapsed) {
           <button (click)="resetFilters(); $event.stopPropagation()" class="hud-toolbar-btn">
             <span class="material-icons text-[14px]">close</span>
@@ -42,7 +42,7 @@
           <!-- Quality row -->
           <div class="flex items-center gap-2">
             <span class="hud-label w-16 shrink-0">Quality</span>
-            <span class="text-xs font-mono text-cyan-700 w-8 text-right shrink-0">{{ qualityMin }}</span>
+            <span class="text-xs font-mono text-hud-muted w-8 text-right shrink-0">{{ qualityMin }}</span>
             <div class="hud-dual-range">
               <div class="hud-dual-range-track"></div>
               <div class="hud-dual-range-fill"
@@ -51,14 +51,14 @@
               <input type="range" min="0" [max]="qualityMax" step="10" [(ngModel)]="qualityMin" />
               <input type="range" [min]="qualityMin" max="1000" step="10" [(ngModel)]="qualityMax" />
             </div>
-            <span class="text-xs font-mono text-cyan-700 w-12 shrink-0">{{ qualityMax }}</span>
+            <span class="text-xs font-mono text-hud-muted w-12 shrink-0">{{ qualityMax }}</span>
             <div class="flex items-center gap-1 ml-2">
               @for (threshold of qualityShortcuts; track threshold) {
                 <button (click)="setQualityMin(threshold)"
                   class="text-xs font-mono px-1.5 py-0.5 border transition-colors cursor-pointer"
                   [class]="qualityMin === threshold && qualityMax === 1000
-                    ? 'border-cyan-500 text-cyan-300 bg-cyan-950'
-                    : 'border-cyan-900 text-cyan-700 hover:border-cyan-600 hover:text-cyan-400'">
+                    ? 'border-hud-mid text-hud-primary bg-hud-deep'
+                    : 'border-hud-dim text-hud-muted hover:border-hud-secondary hover:text-hud-accent'">
                   {{ threshold }}+
                 </button>
               }
@@ -68,7 +68,7 @@
           <!-- Quantity row -->
           <div class="flex items-center gap-2">
             <span class="hud-label w-16 shrink-0">Quantity</span>
-            <span class="text-xs font-mono text-cyan-700 w-8 text-right shrink-0">{{ qtyMin }}</span>
+            <span class="text-xs font-mono text-hud-muted w-8 text-right shrink-0">{{ qtyMin }}</span>
             <div class="hud-dual-range">
               <div class="hud-dual-range-track"></div>
               <div class="hud-dual-range-fill"
@@ -77,7 +77,7 @@
               <input type="range" min="0" [max]="qtyMax" step="5" [(ngModel)]="qtyMin" />
               <input type="range" [min]="qtyMin" max="100" step="5" [(ngModel)]="qtyMax" />
             </div>
-            <span class="text-xs font-mono text-cyan-700 w-12 shrink-0">{{ qtyMax }}</span>
+            <span class="text-xs font-mono text-hud-muted w-12 shrink-0">{{ qtyMax }}</span>
           </div>
 
           <!-- Material row -->
@@ -90,19 +90,19 @@
                 @if (selectedMaterials.size === 0) { All } @else { {{ selectedMaterials.size }} selected }
               </button>
               @if (matDropPos) {
-                <div class="fixed z-[9999] bg-[#091525] border border-[#0d2a40] py-2 min-w-[14rem] max-h-64 overflow-y-auto"
+                <div class="fixed z-9999 bg-(--surface) border border-(--panel-border) py-2 min-w-56 max-h-64 overflow-y-auto"
                      [style.top.px]="matDropPos.top" [style.left.px]="matDropPos.left">
                   @for (mat of availableMaterials; track mat) {
-                    <label class="flex items-center gap-2 px-3 py-1.5 cursor-pointer hover:bg-cyan-950 transition-colors group"
+                    <label class="flex items-center gap-2 px-3 py-1.5 cursor-pointer hover:bg-hud-deep transition-colors group"
                            (click)="toggleMaterialFilter(mat)">
                       <span class="shrink-0 w-3.5 h-3.5 border flex items-center justify-center transition-colors"
-                        [class]="isMaterialFiltered(mat) ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : 'border-cyan-800 group-hover:border-cyan-600'">
+                        [class]="isMaterialFiltered(mat) ? 'border-hud-accent bg-hud-accent glow-cyan-sm' : 'border-hud-ghost group-hover:border-hud-secondary'">
                         @if (isMaterialFiltered(mat)) {
                           <svg viewBox="0 0 10 10" class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2"/></svg>
                         }
                       </span>
                       <span class="text-xs tracking-wide"
-                        [class]="isMaterialFiltered(mat) ? 'text-cyan-300' : 'text-cyan-700 group-hover:text-cyan-500'">
+                        [class]="isMaterialFiltered(mat) ? 'text-hud-primary' : 'text-hud-muted group-hover:text-hud-mid'">
                         {{ materialName(mat) }}
                       </span>
                     </label>
@@ -118,18 +118,18 @@
   }
   @if (records.length === 0) {
     <div class="panel p-8 text-center">
-      <p class="text-cyan-800 text-xs tracking-widest uppercase">// No records found. Cargo manifest is empty.</p>
+      <p class="text-hud-ghost text-xs tracking-widest uppercase">// No records found. Cargo manifest is empty.</p>
     </div>
   } @else {
     <div class="flex flex-col gap-6">
 
       <!-- Transfer toolbar -->
       @if (selectedCount > 0) {
-        <div class="panel px-4 py-3 flex items-center gap-3 border-cyan-600">
-          <span class="material-icons text-cyan-400 text-[18px]">move_up</span>
-          <span class="text-xs tracking-widest uppercase text-cyan-400">{{ selectedCount }} selected</span>
-          <div class="flex-1 h-px bg-cyan-900"></div>
-          <span class="text-xs tracking-widest uppercase text-cyan-600">Transfer to</span>
+        <div class="panel px-4 py-3 flex items-center gap-3 border-hud-secondary">
+          <span class="material-icons text-hud-accent text-[18px]">move_up</span>
+          <span class="text-xs tracking-widest uppercase text-hud-accent">{{ selectedCount }} selected</span>
+          <div class="flex-1 h-px bg-hud-dim"></div>
+          <span class="text-xs tracking-widest uppercase text-hud-secondary">Transfer to</span>
           <select [(ngModel)]="transferDestination" class="sci-input text-sm pr-2" style="width:16rem">
             <option value="" disabled>— select destination —</option>
             @for (loc of transferLocations; track loc.name) {
@@ -138,7 +138,7 @@
           </select>
           <button (click)="onTransfer()" [disabled]="!transferDestination"
             class="text-xs tracking-widest uppercase px-3 h-8 border transition-colors cursor-pointer"
-            [class]="transferDestination ? 'border-cyan-500 text-cyan-300 hover:bg-cyan-900' : 'border-cyan-900 text-cyan-800 cursor-not-allowed'">
+            [class]="transferDestination ? 'border-hud-mid text-hud-primary hover:bg-hud-dim' : 'border-hud-dim text-hud-ghost cursor-not-allowed'">
             TRANSFER
           </button>
           <button (click)="clearSelection()" class="hud-btn-ghost h-8">
@@ -149,23 +149,23 @@
       @for (loc of usedLocations; track loc) {
         <div class="panel overflow-x-auto">
           <!-- Station header -->
-          <div class="flex items-center justify-between px-4 py-3 border-b border-cyan-900 cursor-pointer"
+          <div class="flex items-center justify-between px-4 py-3 border-b border-hud-dim cursor-pointer"
                (click)="toggleLocation(loc)">
             <div class="flex items-center gap-3">
-              <span class="material-icons text-[14px] text-cyan-700 transition-transform duration-150"
+              <span class="material-icons text-[14px] text-hud-muted transition-transform duration-150"
                 [class]="isLocationCollapsed(loc) ? '' : 'rotate-90'">chevron_right</span>
               <span (click)="toggleLocationSelection(loc); $event.stopPropagation()"
                 class="shrink-0 cursor-pointer w-3.5 h-3.5 border flex items-center justify-center transition-colors"
-                [class]="isLocationFullySelected(loc) ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : isLocationPartiallySelected(loc) ? 'border-cyan-400 bg-cyan-900' : 'border-cyan-800 hover:border-cyan-600'">
+                [class]="isLocationFullySelected(loc) ? 'border-hud-accent bg-hud-accent glow-cyan-sm' : isLocationPartiallySelected(loc) ? 'border-hud-accent bg-hud-dim' : 'border-hud-ghost hover:border-hud-secondary'">
                 @if (isLocationFullySelected(loc)) {
                   <svg viewBox="0 0 10 10" class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2"/></svg>
                 } @else if (isLocationPartiallySelected(loc)) {
-                  <span class="w-1.5 h-1.5 bg-cyan-400 block"></span>
+                  <span class="w-1.5 h-1.5 bg-hud-accent block"></span>
                 }
               </span>
-              <span class="text-sm font-bold tracking-[0.2em] uppercase text-cyan-300">{{ loc }}</span>
+              <span class="text-sm font-bold tracking-[0.2em] uppercase text-hud-primary">{{ loc }}</span>
             </div>
-            <span class="text-xs tracking-widest uppercase text-cyan-700">
+            <span class="text-xs tracking-widest uppercase text-hud-muted">
               {{ materialGroupsAt(loc).length }} material(s) &nbsp;·&nbsp; {{ recordsAt(loc).length }} record(s) &nbsp;|&nbsp; {{ totalScu(loc) }} cSCU total
             </span>
           </div>
@@ -173,7 +173,7 @@
           @if (!isLocationCollapsed(loc)) {
           <table class="w-full text-sm">
             <thead>
-              <tr class="border-b border-cyan-950">
+              <tr class="border-b border-hud-deep">
                 <th class="px-4 py-2 w-8"></th>
                 <th class="hud-th">Material</th>
                 <th class="hud-th">Quality</th>
@@ -184,69 +184,69 @@
             <tbody>
               @for (g of materialGroupsAt(loc); track g.material; let odd = $odd) {
                 <!-- Group summary row -->
-                <tr class="border-b border-cyan-900 cursor-pointer hover:bg-cyan-950 transition-colors"
-                    [class]="odd ? 'bg-[#040c18]' : 'bg-[#060f1e]'"
+                <tr class="border-b border-hud-dim cursor-pointer hover:bg-hud-deep transition-colors"
+                    [class]="odd ? 'bg-(--bg-row-odd)' : 'bg-(--bg-row-even)'"
                     (click)="toggleGroup(loc, g.material)">
                   <td class="px-4 py-2.5" (click)="$event.stopPropagation()">
                     <span (click)="toggleGroupSelection(g)"
                       class="shrink-0 cursor-pointer w-3.5 h-3.5 border flex items-center justify-center transition-colors"
-                      [class]="isGroupFullySelected(g) ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : isGroupPartiallySelected(g) ? 'border-cyan-400 bg-cyan-900' : 'border-cyan-800 hover:border-cyan-600'">
+                      [class]="isGroupFullySelected(g) ? 'border-hud-accent bg-hud-accent glow-cyan-sm' : isGroupPartiallySelected(g) ? 'border-hud-accent bg-hud-dim' : 'border-hud-ghost hover:border-hud-secondary'">
                       @if (isGroupFullySelected(g)) {
                         <svg viewBox="0 0 10 10" class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2"/></svg>
                       } @else if (isGroupPartiallySelected(g)) {
-                        <span class="w-1.5 h-1.5 bg-cyan-400 block"></span>
+                        <span class="w-1.5 h-1.5 bg-hud-accent block"></span>
                       }
                     </span>
                   </td>
-                  <td class="px-4 py-2.5 text-cyan-300 font-bold tracking-wide">
+                  <td class="px-4 py-2.5 text-hud-primary font-bold tracking-wide">
                     <div class="flex items-center gap-2">
                       <span class="material-icons text-[14px] transition-transform duration-150"
                         [class]="isGroupExpanded(loc, g.material) ? 'rotate-90' : ''">chevron_right</span>
                       {{ materialName(g.material) }}
                       @if (g.records.length > 1) {
-                        <span class="text-xs text-cyan-700 font-normal font-mono">&times;{{ g.records.length }}</span>
+                        <span class="text-xs text-hud-muted font-normal font-mono">&times;{{ g.records.length }}</span>
                       }
                     </div>
                   </td>
-                  <td class="px-4 py-2.5 text-slate-400 font-mono text-sm border-x border-cyan-900/40">
+                  <td class="px-4 py-2.5 text-hud-data-dim font-mono text-sm border-x border-hud-dim/40">
                     @if (g.qualityMin === g.qualityMax) {
                       {{ g.qualityMin }}
                     } @else {
                       {{ g.qualityMin }}&thinsp;&ndash;&thinsp;{{ g.qualityMax }}
                     }
                   </td>
-                  <td class="px-4 py-2.5 text-slate-300 font-mono border-x border-cyan-900/40">{{ g.totalQty }}</td>
+                  <td class="px-4 py-2.5 text-hud-data font-mono border-x border-hud-dim/40">{{ g.totalQty }}</td>
                   <td class="px-4 py-2.5"></td>
                 </tr>
                 <!-- Expanded individual records -->
                 @if (isGroupExpanded(loc, g.material)) {
                   @for (r of g.records; track r.id) {
-                    <tr class="bg-[#030a14] border-b border-cyan-950 hover:bg-[#071018] transition-colors">
+                    <tr class="bg-(--bg-deep) border-b border-hud-deep hover:bg-(--bg-hover) transition-colors">
                       <td class="px-4 py-2">
                         <span (click)="toggleSelect(r.id)"
                           class="shrink-0 cursor-pointer w-3.5 h-3.5 border flex items-center justify-center transition-colors"
-                          [class]="isSelected(r.id) ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : 'border-cyan-800 hover:border-cyan-600'">
+                          [class]="isSelected(r.id) ? 'border-hud-accent bg-hud-accent glow-cyan-sm' : 'border-hud-ghost hover:border-hud-secondary'">
                           @if (isSelected(r.id)) {
                             <svg viewBox="0 0 10 10" class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2"/></svg>
                           }
                         </span>
                       </td>
-                      <td class="pl-8 pr-4 py-2 text-cyan-500 font-bold tracking-wide text-sm">
-                        <span class="text-cyan-800 font-mono text-xs mr-1">└─</span>{{ materialName(r.material) }}
+                      <td class="pl-8 pr-4 py-2 text-hud-mid font-bold tracking-wide text-sm">
+                        <span class="text-hud-ghost font-mono text-xs mr-1">└─</span>{{ materialName(r.material) }}
                       </td>
-                      <td class="relative p-0 border-x border-cyan-900/40">
-                        <div class="absolute inset-0 bg-cyan-400/10" [style.width]="qualityFill(r.quality)"></div>
-                        <span class="relative font-mono text-slate-300 text-sm px-3 py-2 block">{{ r.quality }}</span>
+                      <td class="relative p-0 border-x border-hud-dim/40">
+                        <div class="absolute inset-0 bg-hud-accent/10" [style.width]="qualityFill(r.quality)"></div>
+                        <span class="relative font-mono text-hud-data text-sm px-3 py-2 block">{{ r.quality }}</span>
                       </td>
-                      <td class="relative p-0 border-x border-cyan-900/40">
-                        <div class="absolute inset-0 bg-cyan-400/10" [style.width]="qtyFill(r.quantity)"></div>
-                        <span class="relative font-mono text-slate-300 text-sm px-3 py-2 block">{{ r.quantity }}</span>
+                      <td class="relative p-0 border-x border-hud-dim/40">
+                        <div class="absolute inset-0 bg-hud-accent/10" [style.width]="qtyFill(r.quantity)"></div>
+                        <span class="relative font-mono text-hud-data text-sm px-3 py-2 block">{{ r.quantity }}</span>
                       </td>
                       <td class="px-4 py-2">
                         <div class="flex items-center justify-end gap-2">
                           <button (click)="onOpenUse(r)"
                             class="hud-btn-use"
-                            [class]="activeUseId === r.id ? 'border-cyan-400 text-cyan-900 bg-cyan-400' : 'border-cyan-900 text-cyan-700 hover:border-cyan-600 hover:text-cyan-400'">
+                            [class]="activeUseId === r.id ? 'border-hud-accent text-hud-dim bg-hud-accent' : 'border-hud-dim text-hud-muted hover:border-hud-secondary hover:text-hud-accent'">
                             USE
                           </button>
                           <button (click)="onRemove(r.id)" class="hud-btn-delete">
@@ -256,15 +256,15 @@
                       </td>
                     </tr>
                     @if (activeUseId === r.id) {
-                      <tr class="bg-[#040c18] border-b border-cyan-800">
+                      <tr class="bg-(--bg-base) border-b border-hud-ghost">
                         <td colspan="5" class="px-4 py-3">
                           <div class="flex items-center gap-3">
-                            <span class="text-xs tracking-widest uppercase text-cyan-600">Amount used (cSCU)</span>
+                            <span class="text-xs tracking-widest uppercase text-hud-secondary">Amount used (cSCU)</span>
                             <input type="number" min="0" [max]="r.quantity"
                               [value]="useAmount"
                               (input)="useAmount = +$any($event.target).value"
                               class="sci-input w-28 text-sm" />
-                            <span class="text-xs text-cyan-800 font-mono">
+                            <span class="text-xs text-hud-ghost font-mono">
                               → {{ r.quantity - useAmount < 0 ? 0 : r.quantity - useAmount }} cSCU remaining
                             </span>
                             <button (click)="onConfirmUse(r)" class="hud-btn-primary h-7">

@@ -1,24 +1,24 @@
-<div class="min-h-screen text-slate-100 p-6 font-mono">
+<div class="min-h-screen text-hud-body p-6 font-mono">
 
   <!-- Header -->
-  <header class="mb-8 border-b border-cyan-900 pb-4">
+  <header class="mb-8 border-b border-hud-dim pb-4">
     <div class="flex items-start justify-between gap-4">
       <div>
         <div class="flex items-center gap-3 mb-1">
-          <span class="inline-block w-2 h-6 bg-cyan-400 glow-cyan-sm"></span>
-          <h1 class="text-2xl font-bold tracking-[0.2em] uppercase text-cyan-300 glow-cyan-sm"
+          <span class="inline-block w-2 h-6 bg-hud-accent glow-cyan-sm"></span>
+          <h1 class="text-2xl font-bold tracking-[0.2em] uppercase text-hud-primary glow-cyan-sm"
               style="text-shadow:0 0 12px rgba(0,229,255,.6)">
             SC Material Manager
           </h1>
         </div>
-        <p class="text-xs tracking-widest text-cyan-800 uppercase ml-5">// Crafting materials tracking system v1.0</p>
+        <p class="text-xs tracking-widest text-hud-ghost uppercase ml-5">// Crafting materials tracking system v1.0</p>
       </div>
       <!-- Action buttons -->
       <div class="flex items-center gap-2 pt-1 shrink-0">
         <button (click)="showStationsModal = true" class="hud-toolbar-btn">
           [ STATIONS ]
           @if (activeStationCount > 0) {
-            <span class="ml-1 text-cyan-400 glow-cyan-sm">{{ activeStationCount }}</span>
+            <span class="ml-1 text-hud-accent glow-cyan-sm">{{ activeStationCount }}</span>
           }
         </button>
         <button (click)="showAddModal = true" class="hud-toolbar-btn">
@@ -37,8 +37,8 @@
          (click)="showStationsModal = false">
       <div class="relative w-full max-w-4xl" (click)="$event.stopPropagation()">
         <div class="panel p-0">
-          <div class="flex items-center justify-between border-b border-cyan-900 px-5 py-3">
-            <span class="text-xs tracking-widest uppercase text-cyan-400">// Select Active Stations</span>
+          <div class="flex items-center justify-between border-b border-hud-dim px-5 py-3">
+            <span class="text-xs tracking-widest uppercase text-hud-accent">// Select Active Stations</span>
             <button (click)="showStationsModal = false" class="hud-btn-ghost text-base leading-none px-2 py-0.5">✕</button>
           </div>
           <div class="p-5">
