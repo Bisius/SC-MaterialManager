@@ -1,0 +1,51 @@
+<section class="max-w-5xl">
+  @if (records.length === 0) {
+    <div class="panel p-8 text-center">
+      <p class="text-cyan-800 text-xs tracking-widest uppercase">// No records found. Cargo manifest is empty.</p>
+    </div>
+  } @else {
+    <div class="flex flex-col gap-6">
+      @for (loc of usedLocations; track loc) {
+        <div class="panel overflow-x-auto">
+          <!-- Station header -->
+          <div class="flex items-center justify-between px-4 py-3 border-b border-cyan-900">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 bg-cyan-400 glow-cyan-sm flex-shrink-0"></span>
+              <span class="text-xs font-bold tracking-[0.2em] uppercase text-cyan-300">{{ loc }}</span>
+            </div>
+            <span class="text-[10px] tracking-widest uppercase text-cyan-700">
+              {{ recordsAt(loc).length }} record(s) &nbsp;|&nbsp; {{ totalScu(loc) }} SCU total
+            </span>
+          </div>
+          <!-- Records table -->
+          <table class="w-full text-xs">
+            <thead>
+              <tr class="border-b border-cyan-950">
+                <th class="px-4 py-2 text-left text-[10px] tracking-[0.2em] uppercase text-cyan-700 font-normal">Material</th>
+                <th class="px-4 py-2 text-left text-[10px] tracking-[0.2em] uppercase text-cyan-700 font-normal">Quality</th>
+                <th class="px-4 py-2 text-left text-[10px] tracking-[0.2em] uppercase text-cyan-700 font-normal">Qty (SCU)</th>
+                <th class="px-4 py-2"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of recordsAt(loc); track r.id; let odd = $odd) {
+                <tr [class]="odd ? 'bg-[#040c18] border-b border-cyan-950' : 'bg-[#060f1e] border-b border-cyan-950'"
+                    class="hover:bg-cyan-950 transition-colors">
+                  <td class="px-4 py-2.5 text-cyan-300 font-bold tracking-wide">{{ materialName(r.material) }}</td>
+                  <td class="px-4 py-2.5 text-slate-300 font-mono">{{ r.quality }}</td>
+                  <td class="px-4 py-2.5 text-slate-300 font-mono">{{ r.quantity }}</td>
+                  <td class="px-4 py-2.5 text-right">
+                    <button (click)="onRemove(r.id)"
+                      class="text-sm leading-none text-red-600 hover:text-red-400 transition-colors cursor-pointer border border-red-900 hover:border-red-500 w-6 h-6 flex items-center justify-center ml-auto">
+                      &times;
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  }
+</section>

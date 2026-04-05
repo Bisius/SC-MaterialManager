@@ -1,70 +1,27 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { materials, Material } from '../../data/materials';
-import { locations, Location } from '../../data/locations';
+import { Component, inject } from '@angular/core';
+import { StationFilterService } from '../../services/station-filter.service';
 import { MaterialStorageService } from '../../services/material-storage.service';
-import { MaterialRecord } from '../../models/material-record';
+import { StationsComponent } from './tabs/stations/stations.component';
+import { AddMaterialComponent } from './tabs/add-material/add-material.component';
+import { CargoManifestComponent } from './tabs/cargo-manifest/cargo-manifest.component';
 
 @Component({
   selector: 'app-materials',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [StationsComponent, AddMaterialComponent, CargoManifestComponent],
   templateUrl: './materials.component.html',
 })
-export class MaterialsComponent implements OnInit {
+export class MaterialsComponent {
 
-  readonly materials: Material[] = materials;
-  readonly locations: Location[] = locations;
-  readonly systems: string[] = [...new Set(locations.map(l => l.system))];
-
-  private fb = inject(FormBuilder);
+  private filter  = inject(StationFilterService);
   private storage = inject(MaterialStorageService);
 
-  materialCtrl = new FormControl<string>('', { nonNullable: true, validators: [Validators.required] });
-  qualityCtrl  = new FormControl<number | null>(null, [Validators.required, Validators.min(0), Validators.max(1000)]);
-  quantityCtrl = new FormControl<number | null>(null, [Validators.required, Validators.min(0)]);
-  locationCtrl = new FormControl<string>('', { nonNullable: true, validators: [Validators.required] });
+  activeTab: 'stations' | 'add' | 'list' = this.filter.activeStationCount() > 0 ? 'add' : 'stations';
 
-  form: FormGroup = this.fb.group({
-    material: this.materialCtrl,
-    quality:  this.qualityCtrl,
-    quantity: this.quantityCtrl,
-    location: this.locationCtrl,
-  });
+  get activeStationCount(): number { return this.filter.activeStationCount(); }
+  get recordCount(): number         { return this.storage.getAll().length; }
 
-  activeTab: 'add' | 'list' = 'add';
-  records: MaterialRecord[] = [];
-
-  ngOnInit(): void {
-    this.records = this.storage.getAll();
-  }
-
-  locationsBySystem(system: string): Location[] {
-    return this.locations.filter(l => l.system === system);
-  }
-
-  materialName(short: string): string {
-    return this.materials.find(m => m.short === short)?.name ?? short;
-  }
-
-  onAdd(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-    this.storage.add({
-      material: this.materialCtrl.value,
-      quality:  this.qualityCtrl.value!,
-      quantity: this.quantityCtrl.value!,
-      location: this.locationCtrl.value,
-    });
-    this.records = this.storage.getAll();
-    this.form.reset();
+  onRecorded(): void {
     this.activeTab = 'list';
-  }
-
-  onRemove(id: string): void {
-    this.storage.remove(id);
-    this.records = this.storage.getAll();
   }
 }
