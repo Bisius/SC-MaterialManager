@@ -1,1 +1,68 @@
 @import "tailwindcss";
+
+/* ── Sci-fi custom tokens ─────────────────────────────────────── */
+:root {
+  --cyan:      #00e5ff;
+  --cyan-dim:  #0097a7;
+  --red-alert: #ff1744;
+  --panel-bg:  #060e1c;
+  --panel-border: #0d2a40;
+  --surface:   #091525;
+}
+
+/* ── Background grid ──────────────────────────────────────────── */
+body {
+  background-color: var(--panel-bg);
+  background-image:
+    linear-gradient(rgba(0,229,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── Glow utilities ───────────────────────────────────────────── */
+.glow-cyan   { box-shadow: 0 0 8px rgba(0,229,255,.45), 0 0 20px rgba(0,229,255,.15); }
+.glow-cyan-sm{ box-shadow: 0 0 4px rgba(0,229,255,.35); }
+.glow-red    { box-shadow: 0 0 8px rgba(255,23,68,.5); }
+
+/* ── Panel clip-path corner cut ──────────────────────────────── */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--panel-border);
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+  position: relative;
+}
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 16px; height: 16px;
+  border-top: 1px solid var(--cyan-dim);
+  border-right: 1px solid var(--cyan-dim);
+}
+
+/* ── Sci-fi input / select ───────────────────────────────────── */
+.sci-input {
+  background: #040c18;
+  border: 1px solid #0d2a40;
+  color: var(--cyan);
+  height: 2.5rem;
+  padding: 0 0.75rem;
+  font-family: 'Courier New', monospace;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  width: 100%;
+}
+.sci-input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 6px rgba(0,229,255,.4);
+}
+.sci-input option,
+.sci-input optgroup {
+  background: #060e1c;
+  color: #e0f7fa;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #040c18; }
+::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 3px; }

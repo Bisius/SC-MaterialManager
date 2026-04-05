@@ -32,6 +32,7 @@ export class MaterialsComponent implements OnInit {
     location: this.locationCtrl,
   });
 
+  activeTab: 'add' | 'list' = 'add';
   records: MaterialRecord[] = [];
 
   ngOnInit(): void {
@@ -59,6 +60,7 @@ export class MaterialsComponent implements OnInit {
     });
     this.records = this.storage.getAll();
     this.form.reset();
+    this.activeTab = 'list';
   }
 
   onRemove(id: string): void {
