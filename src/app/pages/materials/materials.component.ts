@@ -1,20 +1,19 @@
 import { Component, inject } from '@angular/core';
-import { StationFilterService } from '../../services/station-filter.service';
 import { MaterialStorageService } from '../../services/material-storage.service';
-import { StationsComponent } from './tabs/stations/stations.component';
-import { AddMaterialComponent } from './tabs/add-material/add-material.component';
-import { CargoManifestComponent } from './tabs/cargo-manifest/cargo-manifest.component';
-import { AddLocationComponent } from './tabs/add-location/add-location.component';
+import { CargoManifestComponent } from './cargo-manifest/cargo-manifest.component';
+import { ChangelogModalComponent } from './modals/changelog-modal/changelog-modal.component';
+import { StationsModalComponent } from './modals/stations-modal/stations-modal.component';
+import { AddLocationModalComponent } from './modals/add-location-modal/add-location-modal.component';
+import { AddMaterialModalComponent } from './modals/add-material-modal/add-material-modal.component';
 
 @Component({
   selector: 'app-materials',
   standalone: true,
-  imports: [StationsComponent, AddMaterialComponent, CargoManifestComponent, AddLocationComponent],
+  imports: [CargoManifestComponent, ChangelogModalComponent, StationsModalComponent, AddLocationModalComponent, AddMaterialModalComponent],
   templateUrl: './materials.component.html',
 })
 export class MaterialsComponent {
 
-  private filter  = inject(StationFilterService);
   private storage = inject(MaterialStorageService);
 
   showStationsModal = false;
@@ -32,8 +31,7 @@ export class MaterialsComponent {
     },
   ];
 
-  get activeStationCount(): number { return this.filter.activeStationCount(); }
-  get recordCount(): number         { return this.storage.getAll().length; }
+  get recordCount(): number { return this.storage.getAll().length; }
 
   onRecorded(goToManifest: boolean): void {
     if (goToManifest) this.showAddModal = false;

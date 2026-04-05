@@ -2,37 +2,21 @@
 
   <!-- Header -->
   <header class="mb-8 border-b border-hud-dim pb-4">
-    <div class="flex flex-col gap-3">
-      <div>
-        <div class="flex items-center gap-3 mb-1">
-          <span class="inline-block w-2 h-6 bg-hud-accent glow-cyan-sm"></span>
-          <h1 class="text-2xl font-bold tracking-[0.2em] uppercase text-hud-primary glow-cyan-sm"
-              style="text-shadow:0 0 12px rgba(0,229,255,.6)">
-            SC Material Manager
-          </h1>
-        </div>
-        <p class="text-xs tracking-widest text-hud-ghost uppercase ml-5">// Crafting materials tracking system v1.0</p>
-      </div>
-      <!-- Action buttons -->
-      <div class="flex items-center gap-2">
-        <button (click)="showStationsModal = true" class="hud-toolbar-btn">
-          [ STATIONS ]
-          @if (activeStationCount > 0) {
-            <span class="ml-1 text-hud-accent glow-cyan-sm">{{ activeStationCount }}</span>
-          }
-        </button>
-        <button (click)="showAddLocationModal = true" class="hud-toolbar-btn">
-          [ + LOCATION ]
-        </button>
-        <button (click)="showAddModal = true" class="hud-toolbar-btn">
-          [ ADD MATERIAL ]
-        </button>
-      </div>
+    <div class="flex items-center gap-3 mb-1">
+      <span class="inline-block w-2 h-6 bg-hud-accent glow-cyan-sm"></span>
+      <h1 class="text-2xl font-bold tracking-[0.2em] uppercase text-hud-primary glow-cyan-sm"
+          style="text-shadow:0 0 12px rgba(0,229,255,.6)">
+        SC Material Manager
+      </h1>
     </div>
+    <p class="text-xs tracking-widest text-hud-ghost uppercase ml-5">// Crafting materials tracking system v1.0</p>
   </header>
 
   <!-- Cargo Manifest (always visible) -->
-  <app-cargo-manifest />
+  <app-cargo-manifest
+    (openStations)="showStationsModal = true"
+    (openAddLocation)="showAddLocationModal = true"
+    (openAddMaterial)="showAddModal = true" />
 
   <!-- Footer -->
   <footer class="mt-10 border-t border-hud-dim pt-4 flex items-center justify-start gap-6">
@@ -48,79 +32,10 @@
     </button>
   </footer>
 
-  <!-- Changelog Modal -->
-  @if (showChangelogModal) {
-    <div class="fixed inset-0 bg-black/70 z-40 flex items-start justify-center py-16 overflow-y-auto px-4"
-         (click)="showChangelogModal = false">
-      <div class="relative w-full max-w-xl" (click)="$event.stopPropagation()">
-        <div class="panel p-0">
-          <div class="flex items-center justify-between border-b border-hud-dim px-5 py-3">
-            <span class="text-xs tracking-widest uppercase text-hud-accent">// Changelog</span>
-            <button (click)="showChangelogModal = false" class="hud-btn-ghost text-base leading-none px-2 py-0.5">✕</button>
-          </div>
-          <div class="p-5 space-y-5">
-            @for (entry of changelog; track entry.version) {
-              <div>
-                <div class="flex items-baseline gap-3 mb-1.5">
-                  <span class="text-sm font-bold text-hud-primary tracking-widest">{{ entry.version }}</span>
-                  <span class="text-xs text-hud-ghost">{{ entry.date }}</span>
-                </div>
-                <ul class="space-y-1">
-                  @for (change of entry.changes; track change) {
-                    <li class="flex items-start gap-2 text-xs text-hud-body">
-                      <span class="text-hud-accent shrink-0 mt-0.5">›</span>
-                      {{ change }}
-                    </li>
-                  }
-                </ul>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-    </div>
-  }
-
-  <!-- Stations Modal -->
-  @if (showStationsModal) {
-    <div class="fixed inset-0 bg-black/70 z-40 flex items-start justify-center py-16 overflow-y-auto px-4"
-         (click)="showStationsModal = false">
-      <div class="relative w-full max-w-4xl" (click)="$event.stopPropagation()">
-        <div class="panel p-0">
-          <div class="flex items-center justify-between border-b border-hud-dim px-5 py-3">
-            <span class="text-xs tracking-widest uppercase text-hud-accent">// Select Active Stations</span>
-            <button (click)="showStationsModal = false" class="hud-btn-ghost text-base leading-none px-2 py-0.5">✕</button>
-          </div>
-          <div class="p-5">
-            <app-stations />
-          </div>
-        </div>
-      </div>
-    </div>
-  }
-
-  <!-- Add Location Modal -->
-  @if (showAddLocationModal) {
-    <div class="fixed inset-0 bg-black/70 z-40 flex items-start justify-center py-16 overflow-y-auto px-4"
-         (click)="showAddLocationModal = false">
-      <div class="relative w-full max-w-2xl" (click)="$event.stopPropagation()">
-        <button (click)="showAddLocationModal = false"
-                class="absolute top-3 right-3 z-10 hud-btn-ghost text-base leading-none px-2 py-0.5">✕</button>
-        <app-add-location />
-      </div>
-    </div>
-  }
-
-  <!-- Add Material Modal -->
-  @if (showAddModal) {
-    <div class="fixed inset-0 bg-black/70 z-40 flex items-start justify-center py-16 overflow-y-auto px-4"
-         (click)="showAddModal = false">
-      <div class="relative w-full max-w-3xl" (click)="$event.stopPropagation()">
-        <button (click)="showAddModal = false"
-                class="absolute top-3 right-3 z-10 hud-btn-ghost text-base leading-none px-2 py-0.5">✕</button>
-        <app-add-material (recorded)="onRecorded($event)" />
-      </div>
-    </div>
-  }
+  <!-- Modals -->
+  <app-changelog-modal [open]="showChangelogModal" [changelog]="changelog" (close)="showChangelogModal = false" />
+  <app-stations-modal [open]="showStationsModal" (close)="showStationsModal = false" />
+  <app-add-location-modal [open]="showAddLocationModal" (close)="showAddLocationModal = false" />
+  <app-add-material-modal [open]="showAddModal" (close)="showAddModal = false" (recorded)="onRecorded($event)" />
 
 </div>

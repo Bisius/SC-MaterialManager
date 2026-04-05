@@ -1,11 +1,11 @@
-import { Component, OnInit, inject, ElementRef, ViewChild, ChangeDetectorRef, HostListener, computed, signal } from '@angular/core';
+import { Component, OnInit, inject, ElementRef, ViewChild, ChangeDetectorRef, HostListener, computed, signal, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { materials, Material } from '../../../../data/materials';
-import { locations, Location } from '../../../../data/locations';
-import { MaterialStorageService } from '../../../../services/material-storage.service';
-import { StationFilterService } from '../../../../services/station-filter.service';
-import { CustomLocationService } from '../../../../services/custom-location.service';
-import { MaterialRecord } from '../../../../models/material-record';
+import { materials, Material } from '../../../data/materials';
+import { locations, Location } from '../../../data/locations';
+import { MaterialStorageService } from '../../../services/material-storage.service';
+import { StationFilterService } from '../../../services/station-filter.service';
+import { CustomLocationService } from '../../../services/custom-location.service';
+import { MaterialRecord } from '../../../models/material-record';
 
 interface MaterialGroup {
   material: string;
@@ -23,11 +23,17 @@ interface MaterialGroup {
 })
 export class CargoManifestComponent implements OnInit {
 
+  @Output() openStations     = new EventEmitter<void>();
+  @Output() openAddLocation  = new EventEmitter<void>();
+  @Output() openAddMaterial  = new EventEmitter<void>();
+
   private readonly allMaterials: Material[] = materials;
   readonly allLocations: Location[] = locations;
   private storage = inject(MaterialStorageService);
   private filter = inject(StationFilterService);
   private customLocSvc = inject(CustomLocationService);
+
+  get activeStationCount(): number { return this.filter.activeStationCount(); }
   private cdr = inject(ChangeDetectorRef);
 
   get transferLocations(): Location[] {
