@@ -1,25 +1,25 @@
-import { Component, inject, output, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { materials, Material } from '../../../../data/materials';
 import { MaterialStorageService } from '../../../../services/material-storage.service';
 import { StationFilterService } from '../../../../services/station-filter.service';
 
 @Component({
-  selector: 'app-add-material',
+  selector: 'app-add-material-modal',
   standalone: true,
   imports: [ReactiveFormsModule],
-  templateUrl: './add-material.component.html',
+  templateUrl: './add-material-modal.component.html',
 })
-export class AddMaterialComponent {
+export class AddMaterialModalComponent {
+  @Input() open = false;
+  @Output() close = new EventEmitter<void>();
+  @Output() recorded = new EventEmitter<boolean>();
 
   readonly materials: Material[] = materials;
 
   private fb      = inject(FormBuilder);
   private storage = inject(MaterialStorageService);
   readonly filter = inject(StationFilterService);
-
-  /** Emitted after a record is successfully added; value indicates whether to navigate to manifest */
-  readonly recorded = output<boolean>();
 
   readonly goToManifest = signal(true);
 

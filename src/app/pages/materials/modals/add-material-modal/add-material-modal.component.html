@@ -1,0 +1,94 @@
+@if (open) {
+  <div class="fixed inset-0 bg-black/70 z-40 flex items-start justify-center py-16 overflow-y-auto px-4"
+       (click)="close.emit()">
+    <div class="relative w-full max-w-3xl" (click)="$event.stopPropagation()">
+      <button (click)="close.emit()"
+              class="absolute top-3 right-3 z-10 hud-btn-ghost text-base leading-none px-2 py-0.5">✕</button>
+      <section class="panel p-6 max-w-3xl">
+        <div class="hud-section">
+          <span class="hud-section-title">// New Entry</span>
+          <div class="hud-divider"></div>
+        </div>
+        <form [formGroup]="form" (ngSubmit)="onAdd()" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+          <!-- Material -->
+          <div class="flex flex-col gap-1.5">
+            <label class="hud-label">// Material</label>
+            <select formControlName="material" class="sci-input">
+              <option value="" disabled>-- SELECT MATERIAL --</option>
+              @for (m of materials; track m.short) {
+                <option [value]="m.short">{{ m.name }}</option>
+              }
+            </select>
+            @if (materialCtrl.invalid && materialCtrl.touched) {
+              <span class="text-hud-error text-xs tracking-widest uppercase">! REQUIRED</span>
+            }
+          </div>
+
+          <!-- Quality -->
+          <div class="flex flex-col gap-1.5">
+            <label class="hud-label">// Quality [ 0 - 1000 ]</label>
+            <input type="number" formControlName="quality" min="0" max="1000" placeholder="0 - 1000"
+              class="sci-input" />
+            @if (qualityCtrl.invalid && qualityCtrl.touched) {
+              <span class="text-hud-error text-xs tracking-widest uppercase">! VALUE 0 - 1000</span>
+            }
+          </div>
+
+          <!-- Quantity -->
+          <div class="flex flex-col gap-1.5">
+            <label class="hud-label">// Quantity [ cSCU ]</label>
+            <input type="number" formControlName="quantity" min="0" placeholder="cSCU"
+              class="sci-input" />
+            @if (quantityCtrl.invalid && quantityCtrl.touched) {
+              <span class="text-hud-error text-xs tracking-widest uppercase">! POSITIVE VALUE REQUIRED</span>
+            }
+          </div>
+
+          <!-- Location -->
+          <div class="flex flex-col gap-1.5">
+            <label class="hud-label">// Storage Location</label>
+            <select formControlName="location" class="sci-input">
+              <option value="" disabled>-- SELECT LOCATION --</option>
+              @if (filter.activeStationCount() > 0) {
+                <option value="" disabled class="text-hud-muted">-- {{ filter.activeStationCount() }} ACTIVE STATIONS --</option>
+              }
+              @for (sys of filter.filteredSystems(); track sys) {
+                <optgroup [label]="'[ ' + sys + ' ]'">
+                  @for (loc of filter.filteredLocationsBySystem(sys); track loc.name) {
+                    <option [value]="loc.name">{{ loc.name }}</option>
+                  }
+                </optgroup>
+              }
+            </select>
+            @if (locationCtrl.invalid && locationCtrl.touched) {
+              <span class="text-hud-error text-xs tracking-widest uppercase">! REQUIRED</span>
+            }
+          </div>
+
+          <!-- Submit -->
+          <div class="sm:col-span-2 flex items-center justify-between pt-2">
+            <label class="flex items-center gap-2 cursor-pointer group" (click)="goToManifest.update(v => !v)">
+              <span class="w-3.5 h-3.5 border flex items-center justify-center shrink-0 transition-colors"
+                [class]="goToManifest() ? 'border-hud-accent bg-hud-accent glow-cyan-sm' : 'border-hud-ghost group-hover:border-hud-secondary'">
+                @if (goToManifest()) {
+                  <svg viewBox="0 0 10 10" class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2"/></svg>
+                }
+              </span>
+              <span class="text-xs tracking-widest uppercase"
+                [class]="goToManifest() ? 'text-hud-accent' : 'text-hud-muted group-hover:text-hud-mid'">
+                Show manifest after adding
+              </span>
+            </label>
+            <button type="submit"
+              class="px-8 py-2.5 text-xs font-bold tracking-[0.2em] uppercase text-hud-primary border border-hud-mid bg-(--bg-base) hover:bg-hud-deep hover:text-white glow-cyan transition-all cursor-pointer"
+              style="clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)">
+              &gt;&gt; SUBMIT RECORD
+            </button>
+          </div>
+
+        </form>
+      </section>
+    </div>
+  </div>
+}

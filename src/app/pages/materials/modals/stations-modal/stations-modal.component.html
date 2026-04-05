@@ -1,0 +1,76 @@
+@if (open) {
+  <div class="fixed inset-0 bg-black/70 z-40 flex items-start justify-center py-16 overflow-y-auto px-4"
+       (click)="close.emit()">
+    <div class="relative w-full max-w-4xl" (click)="$event.stopPropagation()">
+      <div class="panel p-0">
+        <div class="flex items-center justify-between border-b border-hud-dim px-5 py-3">
+          <span class="text-xs tracking-widest uppercase text-hud-accent">// Select Active Stations</span>
+          <button (click)="close.emit()" class="hud-btn-ghost text-base leading-none px-2 py-0.5">✕</button>
+        </div>
+        <div class="p-5">
+          <div class="hud-section">
+            <span class="hud-section-title">// Select active stations</span>
+            <div class="hud-divider"></div>
+            <button (click)="refineryOnly.update(v => !v)"
+              class="flex items-center gap-1.5 text-xs tracking-widest uppercase transition-colors cursor-pointer px-2 py-1 border"
+              [class]="refineryOnly() ? 'border-hud-accent text-hud-dim bg-hud-accent glow-cyan-sm' : 'border-hud-dim text-hud-muted hover:border-hud-muted hover:text-hud-mid'">
+              <span class="material-icons text-[14px]">factory</span>
+              Refinery only
+            </button>
+          </div>
+          @if (filter.activeStationCount() === 0) {
+            <p class="text-hud-muted text-xs tracking-widest uppercase mb-4">// No stations selected — all locations are shown</p>
+          }
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (sys of filter.systems(); track sys) {
+              <div class="panel p-4">
+                <!-- System header / toggle all -->
+                <div class="flex items-center gap-2 mb-3 pb-2 border-b border-hud-dim cursor-pointer group"
+                     (click)="filter.toggleSystem(sys)">
+                  <span class="flex items-center justify-center" [class]="filter.isSystemFullyActive(sys)
+                    ? 'w-3 h-3 border border-hud-accent bg-hud-accent glow-cyan-sm shrink-0'
+                    : filter.isSystemPartiallyActive(sys)
+                      ? 'w-3 h-3 border border-hud-accent bg-hud-dim shrink-0'
+                      : 'w-3 h-3 border border-hud-ghost bg-transparent shrink-0'">
+                    @if (filter.isSystemFullyActive(sys)) {
+                      <svg viewBox="0 0 10 10" class="w-2 h-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2"/></svg>
+                    } @else if (filter.isSystemPartiallyActive(sys)) {
+                      <span class="w-1.5 h-1.5 bg-hud-accent block"></span>
+                    }
+                  </span>
+                  <span class="text-xs tracking-[0.2em] uppercase font-bold"
+                    [class]="filter.isSystemFullyActive(sys) ? 'text-hud-primary' : filter.isSystemPartiallyActive(sys) ? 'text-hud-mid' : 'text-hud-ghost'">
+                    {{ sys }}
+                  </span>
+                </div>
+                <!-- Individual locations -->
+                <div class="flex flex-col gap-2">
+                  @for (loc of filter.locationsBySystem(sys); track loc.name) {
+                    @if (!refineryOnly() || loc.refinery) {
+                    <div class="flex items-center gap-2 cursor-pointer group" (click)="filter.toggleStation(loc.name)">
+                      <span class="flex items-center justify-center" [class]="filter.isStationActive(loc.name)
+                        ? 'w-2.5 h-2.5 border border-hud-accent bg-hud-accent glow-cyan-sm shrink-0'
+                        : 'w-2.5 h-2.5 border border-hud-ghost bg-transparent shrink-0 group-hover:border-hud-secondary'">
+                        @if (filter.isStationActive(loc.name)) {
+                          <svg viewBox="0 0 10 10" class="w-2 h-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2"/></svg>
+                        }
+                      </span>
+                      <span class="text-sm transition-colors flex items-center gap-1.5"
+                        [class]="filter.isStationActive(loc.name) ? 'text-hud-primary' : 'text-hud-ghost group-hover:text-hud-secondary'">
+                        {{ loc.name }}
+                        @if (loc.refinery) {
+                          <span class="material-icons text-[16px] shrink-0 opacity-75" title="Refinery">factory</span>
+                        }
+                      </span>
+                    </div>
+                    }
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

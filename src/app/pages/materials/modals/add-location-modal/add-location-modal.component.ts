@@ -1,15 +1,18 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CustomLocationService } from '../../../../services/custom-location.service';
 import { StationFilterService } from '../../../../services/station-filter.service';
 
 @Component({
-  selector: 'app-add-location',
+  selector: 'app-add-location-modal',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './add-location.component.html',
+  templateUrl: './add-location-modal.component.html',
 })
-export class AddLocationComponent {
+export class AddLocationModalComponent {
+  @Input() open = false;
+  @Output() close = new EventEmitter<void>();
+
   private customSvc = inject(CustomLocationService);
   private filterSvc = inject(StationFilterService);
 
@@ -26,13 +29,11 @@ export class AddLocationComponent {
 
   submit(): void {
     const name = this.name.trim();
-
     if (!name) { this.nameError.set('Name is required.'); return; }
     if (this.allNames().includes(name.toLowerCase())) {
       this.nameError.set('A location with this name already exists.');
       return;
     }
-
     this.customSvc.add(name, 'custom', this.refinery);
     this.name = '';
     this.refinery = false;

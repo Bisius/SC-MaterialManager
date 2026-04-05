@@ -1,0 +1,31 @@
+@if (open) {
+  <div class="fixed inset-0 bg-black/70 z-40 flex items-start justify-center py-16 overflow-y-auto px-4"
+       (click)="close.emit()">
+    <div class="relative w-full max-w-xl" (click)="$event.stopPropagation()">
+      <div class="panel p-0">
+        <div class="flex items-center justify-between border-b border-hud-dim px-5 py-3">
+          <span class="text-xs tracking-widest uppercase text-hud-accent">// Changelog</span>
+          <button (click)="close.emit()" class="hud-btn-ghost text-base leading-none px-2 py-0.5">✕</button>
+        </div>
+        <div class="p-5 space-y-5">
+          @for (entry of changelog; track entry.version) {
+            <div>
+              <div class="flex items-baseline gap-3 mb-1.5">
+                <span class="text-sm font-bold text-hud-primary tracking-widest">{{ entry.version }}</span>
+                <span class="text-xs text-hud-ghost">{{ entry.date }}</span>
+              </div>
+              <ul class="space-y-1">
+                @for (change of entry.changes; track change) {
+                  <li class="flex items-start gap-2 text-xs text-hud-body">
+                    <span class="text-hud-accent shrink-0 mt-0.5">›</span>
+                    {{ change }}
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}

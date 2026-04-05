@@ -3,6 +3,19 @@
   <div class="hud-section">
     <span class="hud-section-title">// Cargo manifest</span>
     <div class="hud-divider"></div>
+    <button (click)="openStations.emit()" class="hud-toolbar-btn">
+      [ STATIONS ]
+      @if (activeStationCount > 0) {
+        <span class="ml-1 text-hud-accent glow-cyan-sm">{{ activeStationCount }}</span>
+      }
+    </button>
+    <button (click)="openAddLocation.emit()" class="hud-toolbar-btn">
+      [ + LOCATION ]
+    </button>
+    <button (click)="openAddMaterial.emit()" class="hud-toolbar-btn">
+      [ ADD MATERIAL ]
+    </button>
+    <div class="hud-divider"></div>
     <button (click)="onExport()" class="hud-toolbar-btn">
       <span class="material-icons text-[14px]">download</span>
       Export
