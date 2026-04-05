@@ -61,7 +61,7 @@ export const locations: Location[] = [
 	{ name: 'Patch City',               system: 'Pyro', type: LocationType.Station, refinery: false },
 
 	// Nyx
-	{ name: 'Levski',                        system: 'Nyx',     type: LocationType.City,    refinery: false },
+	{ name: 'Levski',                        system: 'Nyx',     type: LocationType.City,    refinery: true  },
 	{ name: "People's Service Station Lambda",system: 'Nyx',    type: LocationType.Station, refinery: false },
 	{ name: "People's Service Station Theta", system: 'Nyx',    type: LocationType.Station, refinery: false },
 	{ name: "People's Service Station Delta", system: 'Nyx',    type: LocationType.Station, refinery: false },
