@@ -1,4 +1,4 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { materials, Material } from '../../../../data/materials';
 import { MaterialStorageService } from '../../../../services/material-storage.service';
@@ -18,8 +18,10 @@ export class AddMaterialComponent {
   private storage = inject(MaterialStorageService);
   readonly filter = inject(StationFilterService);
 
-  /** Emitted after a record is successfully added */
-  readonly recorded = output<void>();
+  /** Emitted after a record is successfully added; value indicates whether to navigate to manifest */
+  readonly recorded = output<boolean>();
+
+  readonly goToManifest = signal(true);
 
   materialCtrl = new FormControl<string>('', { nonNullable: true, validators: [Validators.required] });
   qualityCtrl  = new FormControl<number | null>(null, [Validators.required, Validators.min(0), Validators.max(1000)]);
@@ -45,6 +47,6 @@ export class AddMaterialComponent {
       location: this.locationCtrl.value,
     });
     this.form.reset();
-    this.recorded.emit();
+    this.recorded.emit(this.goToManifest());
   }
 }

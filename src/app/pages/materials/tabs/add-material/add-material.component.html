@@ -61,7 +61,19 @@
     </div>
 
     <!-- Submit -->
-    <div class="sm:col-span-2 flex justify-end pt-2">
+    <div class="sm:col-span-2 flex items-center justify-between pt-2">
+      <label class="flex items-center gap-2 cursor-pointer group" (click)="goToManifest.update(v => !v)">
+        <span class="w-3.5 h-3.5 border flex items-center justify-center shrink-0 transition-colors"
+          [class]="goToManifest() ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : 'border-cyan-800 group-hover:border-cyan-600'">
+          @if (goToManifest()) {
+            <span class="material-icons text-[10px] text-cyan-900 leading-none">check</span>
+          }
+        </span>
+        <span class="text-[10px] tracking-widest uppercase"
+          [class]="goToManifest() ? 'text-cyan-400' : 'text-cyan-700 group-hover:text-cyan-500'">
+          Show manifest after adding
+        </span>
+      </label>
       <button type="submit"
         class="px-8 py-2.5 text-xs font-bold tracking-[0.2em] uppercase text-cyan-300 border border-cyan-500 bg-[#040c18] hover:bg-cyan-950 hover:text-white glow-cyan transition-all cursor-pointer"
         style="clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)">

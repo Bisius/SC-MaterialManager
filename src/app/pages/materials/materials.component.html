@@ -46,7 +46,7 @@
     <app-stations />
   }
   @if (activeTab === 'add') {
-    <app-add-material (recorded)="onRecorded()" />
+    <app-add-material (recorded)="onRecorded($event)" />
   }
   @if (activeTab === 'list') {
     <app-cargo-manifest />

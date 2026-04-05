@@ -21,7 +21,7 @@ export class MaterialsComponent {
   get activeStationCount(): number { return this.filter.activeStationCount(); }
   get recordCount(): number         { return this.storage.getAll().length; }
 
-  onRecorded(): void {
-    this.activeTab = 'list';
+  onRecorded(goToManifest: boolean): void {
+    if (goToManifest) this.activeTab = 'list';
   }
 }
