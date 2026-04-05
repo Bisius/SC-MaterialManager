@@ -49,7 +49,7 @@ export class CargoManifestComponent implements OnInit {
   qtyMax = 100;
 
   readonly qualityShortcuts = [500, 700, 800, 900, 950];
-  filtersCollapsed = false;
+  filtersCollapsed = true;
   selectedMaterials = new Set<string>();
   matDropPos: { top: number; left: number } | null = null;
 
