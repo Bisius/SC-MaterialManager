@@ -36,7 +36,7 @@
           <div class="flex items-center justify-between px-4 py-3 border-b border-cyan-900">
             <div class="flex items-center gap-3">
               <span (click)="toggleLocationSelection(loc)"
-                class="flex-shrink-0 cursor-pointer w-3.5 h-3.5 border flex items-center justify-center transition-colors"
+                class="shrink-0 cursor-pointer w-3.5 h-3.5 border flex items-center justify-center transition-colors"
                 [class]="isLocationFullySelected(loc) ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : isLocationPartiallySelected(loc) ? 'border-cyan-400 bg-cyan-900' : 'border-cyan-800 hover:border-cyan-600'">
                 @if (isLocationFullySelected(loc)) {
                   <span class="material-icons text-[10px] text-cyan-900 leading-none">check</span>
@@ -67,7 +67,7 @@
                     class="hover:bg-cyan-950 transition-colors">
                   <td class="px-4 py-2.5">
                     <span (click)="toggleSelect(r.id)"
-                      class="flex-shrink-0 cursor-pointer w-3.5 h-3.5 border flex items-center justify-center transition-colors"
+                      class="shrink-0 cursor-pointer w-3.5 h-3.5 border flex items-center justify-center transition-colors"
                       [class]="isSelected(r.id) ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : 'border-cyan-800 hover:border-cyan-600'">
                       @if (isSelected(r.id)) {
                         <span class="material-icons text-[10px] text-cyan-900 leading-none">check</span>
