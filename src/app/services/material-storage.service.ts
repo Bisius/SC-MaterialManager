@@ -34,6 +34,11 @@ export class MaterialStorageService {
     this.save(records);
   }
 
+  updateLocation(ids: string[], newLocation: string): void {
+    const records = this.getAll().map(r => ids.includes(r.id) ? { ...r, location: newLocation } : r);
+    this.save(records);
+  }
+
   private save(records: MaterialRecord[]): void {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
   }

@@ -5,12 +5,45 @@
     </div>
   } @else {
     <div class="flex flex-col gap-6">
+
+      <!-- Transfer toolbar -->
+      @if (selectedCount > 0) {
+        <div class="panel px-4 py-3 flex items-center gap-3 border-cyan-600">
+          <span class="material-icons text-cyan-400 text-[18px]">move_up</span>
+          <span class="text-xs tracking-widest uppercase text-cyan-400">{{ selectedCount }} selected</span>
+          <div class="flex-1 h-px bg-cyan-900"></div>
+          <span class="text-xs tracking-widest uppercase text-cyan-600">Transfer to</span>
+          <select [(ngModel)]="transferDestination" class="sci-input text-sm pr-2" style="width:16rem">
+            <option value="" disabled>— select destination —</option>
+            @for (loc of transferLocations; track loc.name) {
+              <option [value]="loc.name">{{ loc.name }}</option>
+            }
+          </select>
+          <button (click)="onTransfer()" [disabled]="!transferDestination"
+            class="text-xs tracking-widest uppercase px-3 h-8 border transition-colors cursor-pointer"
+            [class]="transferDestination ? 'border-cyan-500 text-cyan-300 hover:bg-cyan-900' : 'border-cyan-900 text-cyan-800 cursor-not-allowed'">
+            TRANSFER
+          </button>
+          <button (click)="clearSelection()"
+            class="text-xs tracking-widest uppercase px-3 h-8 border border-cyan-900 text-cyan-700 hover:border-cyan-700 hover:text-cyan-500 transition-colors cursor-pointer">
+            CANCEL
+          </button>
+        </div>
+      }
       @for (loc of usedLocations; track loc) {
         <div class="panel overflow-x-auto">
           <!-- Station header -->
           <div class="flex items-center justify-between px-4 py-3 border-b border-cyan-900">
-            <div class="flex items-center gap-2">
-              <span class="w-2 h-2 bg-cyan-400 glow-cyan-sm flex-shrink-0"></span>
+            <div class="flex items-center gap-3">
+              <span (click)="toggleLocationSelection(loc)"
+                class="flex-shrink-0 cursor-pointer w-3.5 h-3.5 border flex items-center justify-center transition-colors"
+                [class]="isLocationFullySelected(loc) ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : isLocationPartiallySelected(loc) ? 'border-cyan-400 bg-cyan-900' : 'border-cyan-800 hover:border-cyan-600'">
+                @if (isLocationFullySelected(loc)) {
+                  <span class="material-icons text-[10px] text-cyan-900 leading-none">check</span>
+                } @else if (isLocationPartiallySelected(loc)) {
+                  <span class="w-1.5 h-1.5 bg-cyan-400 block"></span>
+                }
+              </span>
               <span class="text-sm font-bold tracking-[0.2em] uppercase text-cyan-300">{{ loc }}</span>
             </div>
             <span class="text-xs tracking-widest uppercase text-cyan-700">
@@ -21,6 +54,7 @@
           <table class="w-full text-sm">
             <thead>
               <tr class="border-b border-cyan-950">
+                <th class="px-4 py-2 w-8"></th>
                 <th class="px-4 py-2 text-left text-xs tracking-[0.2em] uppercase text-cyan-700 font-normal">Material</th>
                 <th class="px-4 py-2 text-left text-xs tracking-[0.2em] uppercase text-cyan-700 font-normal">Quality</th>
                 <th class="px-4 py-2 text-left text-xs tracking-[0.2em] uppercase text-cyan-700 font-normal">Qty (cSCU)</th>
@@ -31,6 +65,15 @@
               @for (r of recordsAt(loc); track r.id; let odd = $odd) {
                 <tr [class]="odd ? 'bg-[#040c18] border-b border-cyan-950' : 'bg-[#060f1e] border-b border-cyan-950'"
                     class="hover:bg-cyan-950 transition-colors">
+                  <td class="px-4 py-2.5">
+                    <span (click)="toggleSelect(r.id)"
+                      class="flex-shrink-0 cursor-pointer w-3.5 h-3.5 border flex items-center justify-center transition-colors"
+                      [class]="isSelected(r.id) ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : 'border-cyan-800 hover:border-cyan-600'">
+                      @if (isSelected(r.id)) {
+                        <span class="material-icons text-[10px] text-cyan-900 leading-none">check</span>
+                      }
+                    </span>
+                  </td>
                   <td class="px-4 py-2.5 text-cyan-300 font-bold tracking-wide">{{ materialName(r.material) }}</td>
                   <td class="px-4 py-2.5 text-slate-300 font-mono">{{ r.quality }}</td>
                   <td class="px-4 py-2.5 text-slate-300 font-mono">{{ r.quantity }}</td>
@@ -50,7 +93,7 @@
                 </tr>
                 @if (activeUseId === r.id) {
                   <tr class="bg-[#040c18] border-b border-cyan-800">
-                    <td colspan="4" class="px-4 py-3">
+                    <td colspan="5" class="px-4 py-3">
                       <div class="flex items-center gap-3">
                         <span class="text-xs tracking-widest uppercase text-cyan-600">Amount used (cSCU)</span>
                         <input type="number" min="0" [max]="r.quantity"
