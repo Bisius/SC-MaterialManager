@@ -1,5 +1,4 @@
-import { Component, inject } from '@angular/core';
-import { MaterialStorageService } from '../../services/material-storage.service';
+import { Component } from '@angular/core';
 import { CargoManifestComponent } from './cargo-manifest/cargo-manifest.component';
 import { ChangelogModalComponent } from './modals/changelog-modal/changelog-modal.component';
 import { StationsModalComponent } from './modals/stations-modal/stations-modal.component';
@@ -13,8 +12,6 @@ import { AddMaterialModalComponent } from './modals/add-material-modal/add-mater
   templateUrl: './materials.component.html',
 })
 export class MaterialsComponent {
-
-  private storage = inject(MaterialStorageService);
 
   showStationsModal = false;
   showAddModal = false;
@@ -30,8 +27,6 @@ export class MaterialsComponent {
       ],
     },
   ];
-
-  get recordCount(): number { return this.storage.getAll().length; }
 
   onRecorded(goToManifest: boolean): void {
     if (goToManifest) this.showAddModal = false;

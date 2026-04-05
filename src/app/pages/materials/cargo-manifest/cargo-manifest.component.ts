@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ElementRef, ViewChild, ChangeDetectorRef, HostListener, computed, signal, Output, EventEmitter } from '@angular/core';
+import { Component, inject, ElementRef, ViewChild, ChangeDetectorRef, HostListener, signal, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { materials, Material } from '../../../data/materials';
 import { locations, Location } from '../../../data/locations';
@@ -21,20 +21,20 @@ interface MaterialGroup {
   imports: [FormsModule],
   templateUrl: './cargo-manifest.component.html',
 })
-export class CargoManifestComponent implements OnInit {
+export class CargoManifestComponent {
 
-  @Output() openStations     = new EventEmitter<void>();
-  @Output() openAddLocation  = new EventEmitter<void>();
-  @Output() openAddMaterial  = new EventEmitter<void>();
+  @Output() openStations    = new EventEmitter<void>();
+  @Output() openAddLocation = new EventEmitter<void>();
+  @Output() openAddMaterial = new EventEmitter<void>();
 
   private readonly allMaterials: Material[] = materials;
   readonly allLocations: Location[] = locations;
-  private storage = inject(MaterialStorageService);
-  private filter = inject(StationFilterService);
+  private storage      = inject(MaterialStorageService);
+  private filter       = inject(StationFilterService);
   private customLocSvc = inject(CustomLocationService);
+  private cdr          = inject(ChangeDetectorRef);
 
   get activeStationCount(): number { return this.filter.activeStationCount(); }
-  private cdr = inject(ChangeDetectorRef);
 
   get transferLocations(): Location[] {
     const active = this.filter.activeStations();
@@ -117,8 +117,6 @@ export class CargoManifestComponent implements OnInit {
   }
 
   get selectedCount(): number { return this.selectedIds.size; }
-
-  ngOnInit(): void { /* records are now live via the storage signal */ }
 
   get records(): MaterialRecord[] { return this.storage.records(); }
 
