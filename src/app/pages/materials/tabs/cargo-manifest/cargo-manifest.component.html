@@ -149,9 +149,12 @@
       @for (loc of usedLocations; track loc) {
         <div class="panel overflow-x-auto">
           <!-- Station header -->
-          <div class="flex items-center justify-between px-4 py-3 border-b border-cyan-900">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-cyan-900 cursor-pointer"
+               (click)="toggleLocation(loc)">
             <div class="flex items-center gap-3">
-              <span (click)="toggleLocationSelection(loc)"
+              <span class="material-icons text-[14px] text-cyan-700 transition-transform duration-150"
+                [class]="isLocationCollapsed(loc) ? '' : 'rotate-90'">chevron_right</span>
+              <span (click)="toggleLocationSelection(loc); $event.stopPropagation()"
                 class="shrink-0 cursor-pointer w-3.5 h-3.5 border flex items-center justify-center transition-colors"
                 [class]="isLocationFullySelected(loc) ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : isLocationPartiallySelected(loc) ? 'border-cyan-400 bg-cyan-900' : 'border-cyan-800 hover:border-cyan-600'">
                 @if (isLocationFullySelected(loc)) {
@@ -167,6 +170,7 @@
             </span>
           </div>
           <!-- Records table -->
+          @if (!isLocationCollapsed(loc)) {
           <table class="w-full text-sm">
             <thead>
               <tr class="border-b border-cyan-950">
@@ -278,6 +282,7 @@
               }
             </tbody>
           </table>
+          }
         </div>
       }
     </div>

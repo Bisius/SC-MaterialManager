@@ -41,6 +41,17 @@ export class CargoManifestComponent implements OnInit {
   selectedIds = new Set<string>();
   transferDestination = '';
   expandedGroups = new Set<string>();
+  collapsedLocations = new Set<string>();
+
+  toggleLocation(loc: string): void {
+    this.collapsedLocations.has(loc)
+      ? this.collapsedLocations.delete(loc)
+      : this.collapsedLocations.add(loc);
+  }
+
+  isLocationCollapsed(loc: string): boolean {
+    return this.collapsedLocations.has(loc);
+  }
 
   // ── Filters ────────────────────────────────────────────────
   qualityMin = 0;
