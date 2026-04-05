@@ -9,7 +9,7 @@ import { join, dirname } from 'node:path';
 
 const BROWSER_DIR = join(import.meta.dirname, '..', 'dist', 'sc-material-manager', 'browser');
 const INPUT  = join(BROWSER_DIR, 'index.html');
-const OUTPUT = join(BROWSER_DIR, 'app.html');
+const OUTPUT = join(BROWSER_DIR, '..', 'index.html');
 
 let html = readFileSync(INPUT, 'utf8');
 
