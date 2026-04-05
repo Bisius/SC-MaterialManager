@@ -13,6 +13,51 @@
     </button>
     <input #importInput type="file" accept=".json" class="hidden" (change)="onImportFile($event)" />
   </div>
+
+  <!-- Filter panel -->
+  @if (records.length > 0) {
+    <div class="bg-[#091525] border border-[#0d2a40] px-4 py-3 mb-6 flex items-center gap-x-6 gap-y-3 overflow-visible relative z-20">
+      <span class="hud-label shrink-0">// Filters</span>
+
+      <!-- Quality range -->
+      <div class="flex items-center gap-2">
+        <span class="hud-label shrink-0">Quality</span>
+        <span class="text-xs font-mono text-cyan-700 w-8 text-right">{{ qualityMin }}</span>
+        <div class="hud-dual-range">
+          <div class="hud-dual-range-track"></div>
+          <div class="hud-dual-range-fill"
+            [style.left.%]="qualityMin / 10"
+            [style.width.%]="(qualityMax - qualityMin) / 10"></div>
+          <input type="range" min="0" [max]="qualityMax" step="10" [(ngModel)]="qualityMin" />
+          <input type="range" [min]="qualityMin" max="1000" step="10" [(ngModel)]="qualityMax" />
+        </div>
+        <span class="text-xs font-mono text-cyan-700 w-12">{{ qualityMax }}</span>
+      </div>
+
+      <!-- Quantity range -->
+      <div class="flex items-center gap-2">
+        <span class="hud-label shrink-0">Quantity</span>
+        <span class="text-xs font-mono text-cyan-700 w-8 text-right">{{ qtyMin }}</span>
+        <div class="hud-dual-range">
+          <div class="hud-dual-range-track"></div>
+          <div class="hud-dual-range-fill"
+            [style.left.%]="qtyMin"
+            [style.width.%]="qtyMax - qtyMin"></div>
+          <input type="range" min="0" [max]="qtyMax" step="5" [(ngModel)]="qtyMin" />
+          <input type="range" [min]="qtyMin" max="100" step="5" [(ngModel)]="qtyMax" />
+        </div>
+        <span class="text-xs font-mono text-cyan-700 w-12">{{ qtyMax }}</span>
+      </div>
+
+      <!-- Reset -->
+      @if (hasActiveFilter) {
+        <button (click)="resetFilters()" class="hud-toolbar-btn ml-auto">
+          <span class="material-icons text-[14px]">close</span>
+          Reset
+        </button>
+      }
+    </div>
+  }
   @if (records.length === 0) {
     <div class="panel p-8 text-center">
       <p class="text-cyan-800 text-xs tracking-widest uppercase">// No records found. Cargo manifest is empty.</p>

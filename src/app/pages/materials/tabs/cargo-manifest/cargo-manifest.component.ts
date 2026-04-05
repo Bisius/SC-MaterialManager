@@ -42,6 +42,27 @@ export class CargoManifestComponent implements OnInit {
   transferDestination = '';
   expandedGroups = new Set<string>();
 
+  // ── Filters ────────────────────────────────────────────────
+  qualityMin = 0;
+  qualityMax = 1000;
+  qtyMin = 0;
+  qtyMax = 100;
+
+  get hasActiveFilter(): boolean {
+    return this.qualityMin > 0 || this.qualityMax < 1000 ||
+           this.qtyMin > 0 || this.qtyMax < 100;
+  }
+
+  resetFilters(): void {
+    this.qualityMin = 0; this.qualityMax = 1000;
+    this.qtyMin = 0; this.qtyMax = 100;
+  }
+
+  private passesFilter(r: MaterialRecord): boolean {
+    return r.quality >= this.qualityMin && r.quality <= this.qualityMax &&
+           r.quantity >= this.qtyMin && r.quantity <= this.qtyMax;
+  }
+
   get selectedCount(): number { return this.selectedIds.size; }
 
   ngOnInit(): void {
@@ -49,11 +70,15 @@ export class CargoManifestComponent implements OnInit {
   }
 
   get usedLocations(): string[] {
-    return [...new Set(this.records.map(r => r.location))].sort();
+    return [...new Set(this.filteredRecords.map(r => r.location))].sort();
+  }
+
+  get filteredRecords(): MaterialRecord[] {
+    return this.records.filter(r => this.passesFilter(r));
   }
 
   recordsAt(location: string): MaterialRecord[] {
-    return this.records.filter(r => r.location === location);
+    return this.filteredRecords.filter(r => r.location === location);
   }
 
   totalScu(location: string): number {
