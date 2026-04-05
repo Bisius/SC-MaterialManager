@@ -40,13 +40,17 @@ export class AddMaterialComponent {
       this.form.markAllAsTouched();
       return;
     }
+    const keepMaterial = this.materialCtrl.value;
+    const keepLocation = this.locationCtrl.value;
     this.storage.add({
-      material: this.materialCtrl.value,
+      material: keepMaterial,
       quality:  this.qualityCtrl.value!,
       quantity: this.quantityCtrl.value!,
-      location: this.locationCtrl.value,
+      location: keepLocation,
     });
     this.form.reset();
+    this.materialCtrl.setValue(keepMaterial);
+    this.locationCtrl.setValue(keepLocation);
     this.recorded.emit(this.goToManifest());
   }
 }
