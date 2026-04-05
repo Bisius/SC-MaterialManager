@@ -66,3 +66,60 @@ body {
 ::-webkit-scrollbar       { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: #040c18; }
 ::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 3px; }
+
+/* ── HUD component classes ──────────────────────────────────────── */
+
+/* Section header row + parts */
+.hud-section       { @apply flex items-center gap-2 mb-5; }
+.hud-section-title { @apply text-cyan-500 text-sm tracking-widest uppercase; }
+.hud-divider       { @apply flex-1 h-px bg-cyan-900; }
+
+/* Form field labels and table header cells */
+.hud-label { @apply text-xs tracking-[0.2em] uppercase text-cyan-600; }
+.hud-th    { @apply px-4 py-2 text-left text-xs tracking-[0.2em] uppercase text-cyan-700 font-normal; }
+
+/* Small ghost toolbar buttons (export, import) */
+.hud-toolbar-btn {
+  @apply flex items-center gap-1.5 text-xs tracking-widest uppercase
+         transition-colors cursor-pointer px-2 py-1 border
+         border-cyan-900 text-cyan-700 hover:border-cyan-600 hover:text-cyan-400;
+}
+
+/* Action buttons — add height at use-site (h-7 or h-8) */
+.hud-btn-ghost {
+  @apply text-xs tracking-widest uppercase px-3 border
+         border-cyan-900 text-cyan-700 hover:border-cyan-700 hover:text-cyan-500
+         transition-colors cursor-pointer;
+}
+.hud-btn-primary {
+  @apply text-xs tracking-widest uppercase px-3 border
+         border-cyan-600 text-cyan-300 hover:bg-cyan-900
+         transition-colors cursor-pointer;
+}
+
+/* Delete (×) icon button */
+.hud-btn-delete {
+  @apply text-sm leading-none text-red-600 hover:text-red-400
+         transition-colors cursor-pointer
+         border border-red-900 hover:border-red-500
+         w-6 h-6 flex items-center justify-center;
+}
+
+/* USE row-action button — color added via [class] binding */
+.hud-btn-use {
+  @apply text-xs tracking-widest uppercase transition-colors cursor-pointer
+         border px-2 h-6 flex items-center;
+}
+
+/* Tab bar — apply hud-tab + hud-tab-active or hud-tab-inactive */
+.hud-tab {
+  @apply px-6 py-2.5 text-xs font-bold tracking-widest uppercase
+         cursor-pointer border border-b-0;
+}
+.hud-tab-active {
+  @apply text-cyan-300 border-cyan-500 bg-[#091525];
+  box-shadow: 0 0 4px rgba(0,229,255,.35);
+}
+.hud-tab-inactive {
+  @apply text-cyan-800 border-transparent hover:text-cyan-500 transition-colors;
+}

@@ -15,24 +15,18 @@
   <!-- Tab Bar -->
   <nav class="flex gap-0 mb-6">
     <button (click)="activeTab = 'stations'"
-      [class]="activeTab === 'stations'
-        ? 'px-6 py-2.5 text-xs font-bold tracking-widest uppercase text-cyan-300 border border-cyan-500 border-b-0 bg-[#091525] cursor-pointer glow-cyan-sm'
-        : 'px-6 py-2.5 text-xs font-bold tracking-widest uppercase text-cyan-800 border border-transparent border-b-0 cursor-pointer hover:text-cyan-500 transition-colors'">
+      [class]="activeTab === 'stations' ? 'hud-tab hud-tab-active' : 'hud-tab hud-tab-inactive'">
       [ STATIONS ]
       @if (activeStationCount > 0) {
         <span class="ml-1 text-cyan-400 glow-cyan-sm">{{ activeStationCount }}</span>
       }
     </button>
     <button (click)="activeTab = 'add'"
-      [class]="activeTab === 'add'
-        ? 'px-6 py-2.5 text-xs font-bold tracking-widest uppercase text-cyan-300 border border-cyan-500 border-b-0 bg-[#091525] cursor-pointer glow-cyan-sm'
-        : 'px-6 py-2.5 text-xs font-bold tracking-widest uppercase text-cyan-800 border border-transparent border-b-0 cursor-pointer hover:text-cyan-500 transition-colors'">
+      [class]="activeTab === 'add' ? 'hud-tab hud-tab-active' : 'hud-tab hud-tab-inactive'">
       [ ADD MATERIAL ]
     </button>
     <button (click)="activeTab = 'list'"
-      [class]="activeTab === 'list'
-        ? 'px-6 py-2.5 text-xs font-bold tracking-widest uppercase text-cyan-300 border border-cyan-500 border-b-0 bg-[#091525] cursor-pointer glow-cyan-sm'
-        : 'px-6 py-2.5 text-xs font-bold tracking-widest uppercase text-cyan-800 border border-transparent border-b-0 cursor-pointer hover:text-cyan-500 transition-colors'">
+      [class]="activeTab === 'list' ? 'hud-tab hud-tab-active' : 'hud-tab hud-tab-inactive'">
       [ CARGO MANIFEST ]
       @if (recordCount > 0) {
         <span class="ml-1 text-cyan-400 glow-cyan-sm">{{ recordCount }}</span>

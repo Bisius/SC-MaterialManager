@@ -1,15 +1,13 @@
 <section class="max-w-5xl">
   <!-- Export / Import toolbar -->
-  <div class="flex items-center gap-2 mb-5">
-    <span class="text-cyan-500 text-sm tracking-widest uppercase">// Cargo manifest</span>
-    <div class="flex-1 h-px bg-cyan-900"></div>
-    <button (click)="onExport()"
-      class="flex items-center gap-1.5 text-[10px] tracking-widest uppercase transition-colors cursor-pointer px-2 py-1 border border-cyan-900 text-cyan-700 hover:border-cyan-600 hover:text-cyan-400">
+  <div class="hud-section">
+    <span class="hud-section-title">// Cargo manifest</span>
+    <div class="hud-divider"></div>
+    <button (click)="onExport()" class="hud-toolbar-btn">
       <span class="material-icons text-[14px]">download</span>
       Export
     </button>
-    <button (click)="onImportClick()"
-      class="flex items-center gap-1.5 text-[10px] tracking-widest uppercase transition-colors cursor-pointer px-2 py-1 border border-cyan-900 text-cyan-700 hover:border-cyan-600 hover:text-cyan-400">
+    <button (click)="onImportClick()" class="hud-toolbar-btn">
       <span class="material-icons text-[14px]">upload</span>
       Import
     </button>
@@ -40,8 +38,7 @@
             [class]="transferDestination ? 'border-cyan-500 text-cyan-300 hover:bg-cyan-900' : 'border-cyan-900 text-cyan-800 cursor-not-allowed'">
             TRANSFER
           </button>
-          <button (click)="clearSelection()"
-            class="text-xs tracking-widest uppercase px-3 h-8 border border-cyan-900 text-cyan-700 hover:border-cyan-700 hover:text-cyan-500 transition-colors cursor-pointer">
+          <button (click)="clearSelection()" class="hud-btn-ghost h-8">
             CANCEL
           </button>
         </div>
@@ -55,7 +52,7 @@
                 class="shrink-0 cursor-pointer w-3.5 h-3.5 border flex items-center justify-center transition-colors"
                 [class]="isLocationFullySelected(loc) ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : isLocationPartiallySelected(loc) ? 'border-cyan-400 bg-cyan-900' : 'border-cyan-800 hover:border-cyan-600'">
                 @if (isLocationFullySelected(loc)) {
-                  <span class="material-icons text-[10px] text-cyan-900 leading-none">check</span>
+                  <svg viewBox="0 0 10 10" class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2"/></svg>
                 } @else if (isLocationPartiallySelected(loc)) {
                   <span class="w-1.5 h-1.5 bg-cyan-400 block"></span>
                 }
@@ -71,9 +68,9 @@
             <thead>
               <tr class="border-b border-cyan-950">
                 <th class="px-4 py-2 w-8"></th>
-                <th class="px-4 py-2 text-left text-xs tracking-[0.2em] uppercase text-cyan-700 font-normal">Material</th>
-                <th class="px-4 py-2 text-left text-xs tracking-[0.2em] uppercase text-cyan-700 font-normal">Quality</th>
-                <th class="px-4 py-2 text-left text-xs tracking-[0.2em] uppercase text-cyan-700 font-normal">Qty (cSCU)</th>
+                <th class="hud-th">Material</th>
+                <th class="hud-th">Quality</th>
+                <th class="hud-th">Qty (cSCU)</th>
                 <th class="px-4 py-2"></th>
               </tr>
             </thead>
@@ -86,7 +83,7 @@
                       class="shrink-0 cursor-pointer w-3.5 h-3.5 border flex items-center justify-center transition-colors"
                       [class]="isSelected(r.id) ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : 'border-cyan-800 hover:border-cyan-600'">
                       @if (isSelected(r.id)) {
-                        <span class="material-icons text-[10px] text-cyan-900 leading-none">check</span>
+                        <svg viewBox="0 0 10 10" class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2"/></svg>
                       }
                     </span>
                   </td>
@@ -96,12 +93,11 @@
                   <td class="px-4 py-2.5">
                     <div class="flex items-center justify-end gap-2">
                       <button (click)="onOpenUse(r)"
-                        class="text-[10px] tracking-widest uppercase transition-colors cursor-pointer border px-2 h-6 flex items-center"
+                        class="hud-btn-use"
                         [class]="activeUseId === r.id ? 'border-cyan-400 text-cyan-900 bg-cyan-400' : 'border-cyan-900 text-cyan-700 hover:border-cyan-600 hover:text-cyan-400'">
                         USE
                       </button>
-                      <button (click)="onRemove(r.id)"
-                        class="text-sm leading-none text-red-600 hover:text-red-400 transition-colors cursor-pointer border border-red-900 hover:border-red-500 w-6 h-6 flex items-center justify-center">
+                      <button (click)="onRemove(r.id)" class="hud-btn-delete">
                         &times;
                       </button>
                     </div>
@@ -119,12 +115,10 @@
                         <span class="text-xs text-cyan-800 font-mono">
                           → {{ r.quantity - useAmount < 0 ? 0 : r.quantity - useAmount }} cSCU remaining
                         </span>
-                        <button (click)="onConfirmUse(r)"
-                          class="text-xs tracking-widest uppercase px-3 h-7 border border-cyan-600 text-cyan-300 hover:bg-cyan-900 transition-colors cursor-pointer">
+                        <button (click)="onConfirmUse(r)" class="hud-btn-primary h-7">
                           CONFIRM
                         </button>
-                        <button (click)="onCancelUse()"
-                          class="text-xs tracking-widest uppercase px-3 h-7 border border-cyan-900 text-cyan-700 hover:border-cyan-700 hover:text-cyan-500 transition-colors cursor-pointer">
+                        <button (click)="onCancelUse()" class="hud-btn-ghost h-7">
                           CANCEL
                         </button>
                       </div>

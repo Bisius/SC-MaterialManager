@@ -1,13 +1,13 @@
 <section class="panel p-6 max-w-3xl">
-  <div class="flex items-center gap-2 mb-5">
-    <span class="text-cyan-500 text-xs tracking-widest uppercase">// New Entry</span>
-    <div class="flex-1 h-px bg-cyan-900"></div>
+  <div class="hud-section">
+    <span class="hud-section-title">// New Entry</span>
+    <div class="hud-divider"></div>
   </div>
   <form [formGroup]="form" (ngSubmit)="onAdd()" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
 
     <!-- Material -->
     <div class="flex flex-col gap-1.5">
-      <label class="text-[10px] tracking-[0.2em] uppercase text-cyan-600">// Material</label>
+      <label class="hud-label">// Material</label>
       <select formControlName="material" class="sci-input">
         <option value="" disabled>-- SELECT MATERIAL --</option>
         @for (m of materials; track m.short) {
@@ -15,33 +15,33 @@
         }
       </select>
       @if (materialCtrl.invalid && materialCtrl.touched) {
-        <span class="text-red-400 text-[10px] tracking-widest uppercase">! REQUIRED</span>
+        <span class="text-red-400 text-xs tracking-widest uppercase">! REQUIRED</span>
       }
     </div>
 
     <!-- Quality -->
     <div class="flex flex-col gap-1.5">
-      <label class="text-[10px] tracking-[0.2em] uppercase text-cyan-600">// Quality [ 0 - 1000 ]</label>
+      <label class="hud-label">// Quality [ 0 - 1000 ]</label>
       <input type="number" formControlName="quality" min="0" max="1000" placeholder="0 - 1000"
         class="sci-input" />
       @if (qualityCtrl.invalid && qualityCtrl.touched) {
-        <span class="text-red-400 text-[10px] tracking-widest uppercase">! VALUE 0 - 1000</span>
+        <span class="text-red-400 text-xs tracking-widest uppercase">! VALUE 0 - 1000</span>
       }
     </div>
 
     <!-- Quantity -->
     <div class="flex flex-col gap-1.5">
-      <label class="text-[10px] tracking-[0.2em] uppercase text-cyan-600">// Quantity [ cSCU ]</label>
+      <label class="hud-label">// Quantity [ cSCU ]</label>
       <input type="number" formControlName="quantity" min="0" placeholder="cSCU"
         class="sci-input" />
       @if (quantityCtrl.invalid && quantityCtrl.touched) {
-        <span class="text-red-400 text-[10px] tracking-widest uppercase">! POSITIVE VALUE REQUIRED</span>
+        <span class="text-red-400 text-xs tracking-widest uppercase">! POSITIVE VALUE REQUIRED</span>
       }
     </div>
 
     <!-- Location -->
     <div class="flex flex-col gap-1.5">
-      <label class="text-[10px] tracking-[0.2em] uppercase text-cyan-600">// Storage Location</label>
+      <label class="hud-label">// Storage Location</label>
       <select formControlName="location" class="sci-input">
         <option value="" disabled>-- SELECT LOCATION --</option>
         @if (filter.activeStationCount() > 0) {
@@ -56,7 +56,7 @@
         }
       </select>
       @if (locationCtrl.invalid && locationCtrl.touched) {
-        <span class="text-red-400 text-[10px] tracking-widest uppercase">! REQUIRED</span>
+        <span class="text-red-400 text-xs tracking-widest uppercase">! REQUIRED</span>
       }
     </div>
 
@@ -66,10 +66,10 @@
         <span class="w-3.5 h-3.5 border flex items-center justify-center shrink-0 transition-colors"
           [class]="goToManifest() ? 'border-cyan-400 bg-cyan-400 glow-cyan-sm' : 'border-cyan-800 group-hover:border-cyan-600'">
           @if (goToManifest()) {
-            <span class="material-icons text-[10px] text-cyan-900 leading-none">check</span>
+            <svg viewBox="0 0 10 10" class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2"/></svg>
           }
         </span>
-        <span class="text-[10px] tracking-widest uppercase"
+        <span class="text-xs tracking-widest uppercase"
           [class]="goToManifest() ? 'text-cyan-400' : 'text-cyan-700 group-hover:text-cyan-500'">
           Show manifest after adding
         </span>
