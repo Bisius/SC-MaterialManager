@@ -216,7 +216,11 @@
                     }
                   </td>
                   <td class="px-4 py-2.5 text-hud-data font-mono border-x border-hud-dim/40">{{ g.totalQty }}</td>
-                  <td class="px-4 py-2.5"></td>
+                  <td class="px-4 py-2.5" (click)="$event.stopPropagation()">
+                    <div class="flex items-center justify-end">
+                      <button (click)="onRemoveGroup(g)" class="hud-btn-delete" title="Delete all {{ materialName(g.material) }} records">&times;</button>
+                    </div>
+                  </td>
                 </tr>
                 <!-- Expanded individual records -->
                 @if (isGroupExpanded(loc, g.material)) {

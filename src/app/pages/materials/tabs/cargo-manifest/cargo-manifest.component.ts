@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ElementRef, ViewChild, ChangeDetectorRef, HostListener } from '@angular/core';
+import { Component, OnInit, inject, ElementRef, ViewChild, ChangeDetectorRef, HostListener, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { materials, Material } from '../../../../data/materials';
 import { locations, Location } from '../../../../data/locations';
@@ -34,7 +34,6 @@ export class CargoManifestComponent implements OnInit {
     return this.allLocations.filter(l => active.has(l.name));
   }
 
-  records: MaterialRecord[] = [];
   activeUseId: string | null = null;
   useAmount = 0;
 
@@ -111,9 +110,9 @@ export class CargoManifestComponent implements OnInit {
 
   get selectedCount(): number { return this.selectedIds.size; }
 
-  ngOnInit(): void {
-    this.records = this.storage.getAll();
-  }
+  ngOnInit(): void { /* records are now live via the storage signal */ }
+
+  get records(): MaterialRecord[] { return this.storage.records(); }
 
   get usedLocations(): string[] {
     return [...new Set(this.filteredRecords.map(r => r.location))].sort();
@@ -195,8 +194,16 @@ export class CargoManifestComponent implements OnInit {
 
   onRemove(id: string): void {
     this.storage.remove(id);
-    this.records = this.storage.getAll();
     if (this.activeUseId === id) this.activeUseId = null;
+  }
+
+  onRemoveGroup(g: MaterialGroup): void {
+    g.records.forEach(r => {
+      this.storage.remove(r.id);
+      this.selectedIds.delete(r.id);
+      if (this.activeUseId === r.id) this.activeUseId = null;
+    });
+    this.selectedIds = new Set(this.selectedIds);
   }
 
   onOpenUse(r: MaterialRecord): void {
@@ -220,7 +227,6 @@ export class CargoManifestComponent implements OnInit {
     } else {
       this.storage.updateQuantity(r.id, remaining);
     }
-    this.records = this.storage.getAll();
     this.activeUseId = null;
   }
 
@@ -264,7 +270,6 @@ export class CargoManifestComponent implements OnInit {
             this.storage.add({ material: r.material, quality: r.quality, quantity: r.quantity, location: r.location });
           }
         });
-        this.records = this.storage.getAll();
         this.cdr.detectChanges();
       } catch { /* invalid file, silently ignore */ }
     };
@@ -312,7 +317,6 @@ export class CargoManifestComponent implements OnInit {
   onTransfer(): void {
     if (!this.transferDestination || this.selectedIds.size === 0) return;
     this.storage.updateLocation([...this.selectedIds], this.transferDestination);
-    this.records = this.storage.getAll();
     this.selectedIds = new Set();
     this.transferDestination = '';
   }

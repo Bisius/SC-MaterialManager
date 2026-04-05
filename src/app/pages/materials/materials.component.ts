@@ -22,7 +22,7 @@ export class MaterialsComponent {
   get activeStationCount(): number { return this.filter.activeStationCount(); }
   get recordCount(): number         { return this.storage.getAll().length; }
 
-  onRecorded(_goToManifest: boolean): void {
-    this.showAddModal = false;
+  onRecorded(goToManifest: boolean): void {
+    if (goToManifest) this.showAddModal = false;
   }
 }
