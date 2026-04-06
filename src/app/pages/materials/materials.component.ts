@@ -20,6 +20,13 @@ export class MaterialsComponent {
 
   readonly changelog: { version: string; date: string; changes: string[] }[] = [
     {
+      version: 'v1.1',
+      date: '2026-04-06',
+      changes: [
+        'Responsive layout for mobile devices',
+      ],
+    },
+    {
       version: 'v1.0',
       date: '2026-04-05',
       changes: [

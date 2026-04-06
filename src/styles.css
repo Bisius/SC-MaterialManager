@@ -156,7 +156,7 @@ body {
 
 
 /* Section header row + parts */
-.hud-section       { @apply flex items-center gap-2 mb-5; }
+.hud-section       { @apply flex flex-wrap items-center gap-2 mb-5; }
 .hud-section-title { @apply text-hud-mid text-sm tracking-widest uppercase; }
 .hud-divider       { @apply flex-1 h-px bg-cyan-900; }
 
