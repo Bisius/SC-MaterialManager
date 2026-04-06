@@ -3,28 +3,31 @@
   <div class="hud-section">
     <span class="hud-section-title">// Cargo manifest</span>
     <div class="hud-divider"></div>
+    <button (click)="onExport()" class="hud-toolbar-btn">
+      <span class="material-icons text-[14px]">download</span>
+      <span class="hidden sm:inline">Export</span>
+    </button>
+    <button (click)="onImportClick()" class="hud-toolbar-btn">
+      <span class="material-icons text-[14px]">upload</span>
+      <span class="hidden sm:inline">Import</span>
+    </button>
+    <input #importInput type="file" accept=".json" class="hidden" (change)="onImportFile($event)" />
+  </div>
+
+  <!-- Action buttons -->
+  <div class="flex flex-wrap gap-2 mb-5">
     <button (click)="openStations.emit()" class="hud-toolbar-btn">
-      [ STATIONS ]
+      STATIONS
       @if (activeStationCount > 0) {
         <span class="ml-1 text-hud-accent glow-cyan-sm">{{ activeStationCount }}</span>
       }
     </button>
     <button (click)="openAddLocation.emit()" class="hud-toolbar-btn">
-      [ + LOCATION ]
+      LOCATIONS
     </button>
     <button (click)="openAddMaterial.emit()" class="hud-toolbar-btn">
-      [ ADD MATERIAL ]
+      ADD MATERIAL
     </button>
-    <div class="hud-divider"></div>
-    <button (click)="onExport()" class="hud-toolbar-btn">
-      <span class="material-icons text-[14px]">download</span>
-      Export
-    </button>
-    <button (click)="onImportClick()" class="hud-toolbar-btn">
-      <span class="material-icons text-[14px]">upload</span>
-      Import
-    </button>
-    <input #importInput type="file" accept=".json" class="hidden" (change)="onImportFile($event)" />
   </div>
 
   <!-- Import mode modal -->
@@ -81,7 +84,7 @@
         <div class="flex flex-col gap-3 mt-3">
 
           <!-- Quality row -->
-          <div class="flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2">
             <span class="hud-label w-16 shrink-0">Quality</span>
             <span class="text-xs font-mono text-hud-muted w-8 text-right shrink-0">{{ qualityMin }}</span>
             <div class="hud-dual-range">
@@ -107,7 +110,7 @@
           </div>
 
           <!-- Quantity row -->
-          <div class="flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2">
             <span class="hud-label w-16 shrink-0">Quantity</span>
             <span class="text-xs font-mono text-hud-muted w-8 text-right shrink-0">{{ qtyMin }}</span>
             <div class="hud-dual-range">
@@ -166,31 +169,33 @@
 
       <!-- Transfer toolbar -->
       @if (selectedCount > 0) {
-        <div class="panel px-4 py-3 flex items-center gap-3 border-hud-secondary">
+        <div class="panel px-4 py-3 flex flex-wrap items-center gap-3 gap-y-2 border-hud-secondary">
           <span class="material-icons text-hud-accent text-[18px]">move_up</span>
           <span class="text-xs tracking-widest uppercase text-hud-accent">{{ selectedCount }} selected</span>
-          <div class="flex-1 h-px bg-hud-dim"></div>
-          <span class="text-xs tracking-widest uppercase text-hud-secondary">Transfer to</span>
-          <select [(ngModel)]="transferDestination" class="sci-input text-sm pr-2" style="width:16rem">
+          <div class="flex-1 h-px bg-hud-dim hidden sm:block"></div>
+          <span class="hidden sm:inline text-xs tracking-widest uppercase text-hud-secondary">Transfer to</span>
+          <select [(ngModel)]="transferDestination" class="sci-input text-sm pr-2" style="flex:1 1 8rem;min-width:8rem;max-width:16rem">
             <option value="" disabled>— select destination —</option>
             @for (loc of transferLocations; track loc.name) {
               <option [value]="loc.name">{{ loc.name }}</option>
             }
           </select>
-          <button (click)="onTransfer()" [disabled]="!transferDestination"
-            class="text-xs tracking-widest uppercase px-3 h-8 border transition-colors cursor-pointer"
-            [class]="transferDestination ? 'border-hud-mid text-hud-primary hover:bg-hud-dim' : 'border-hud-dim text-hud-ghost cursor-not-allowed'">
-            TRANSFER
-          </button>
-          <button (click)="clearSelection()" class="hud-btn-ghost h-8">
-            CANCEL
-          </button>
+          <div class="flex items-center gap-2 shrink-0">
+            <button (click)="onTransfer()" [disabled]="!transferDestination"
+              class="text-xs tracking-widest uppercase px-3 h-8 border transition-colors cursor-pointer"
+              [class]="transferDestination ? 'border-hud-mid text-hud-primary hover:bg-hud-dim' : 'border-hud-dim text-hud-ghost cursor-not-allowed'">
+              TRANSFER
+            </button>
+            <button (click)="clearSelection()" class="hud-btn-ghost h-8">
+              CANCEL
+            </button>
+          </div>
         </div>
       }
       @for (loc of usedLocations; track loc) {
         <div class="panel overflow-x-auto">
           <!-- Station header -->
-          <div class="flex items-center justify-between px-4 py-3 border-b border-hud-dim cursor-pointer"
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-hud-dim cursor-pointer gap-1"
                (click)="toggleLocation(loc)">
             <div class="flex items-center gap-3">
               <span class="material-icons text-[14px] text-hud-muted transition-transform duration-150"
@@ -206,7 +211,7 @@
               </span>
               <span class="text-sm font-bold tracking-[0.2em] uppercase text-hud-primary">{{ loc }}</span>
             </div>
-            <span class="text-xs tracking-widest uppercase text-hud-muted">
+            <span class="text-xs tracking-widest uppercase text-hud-muted pl-7 sm:pl-0 sm:text-right">
               {{ materialGroupsAt(loc).length }} material(s) &nbsp;·&nbsp; {{ recordsAt(loc).length }} record(s) &nbsp;|&nbsp; {{ totalScu(loc) }} cSCU total
             </span>
           </div>
@@ -303,7 +308,7 @@
                     @if (activeUseId === r.id) {
                       <tr class="bg-(--bg-base) border-b border-hud-ghost">
                         <td colspan="5" class="px-4 py-3">
-                          <div class="flex items-center gap-3">
+                          <div class="flex flex-wrap items-center gap-3 gap-y-2">
                             <span class="text-xs tracking-widest uppercase text-hud-secondary">Amount used (cSCU)</span>
                             <input type="number" min="0" [max]="r.quantity"
                               [value]="useAmount"
