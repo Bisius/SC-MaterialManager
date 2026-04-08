@@ -64,7 +64,6 @@ export class CargoManifestComponent {
   qualityMin = 0;
   qualityMax = 1000;
   qtyMin = 0;
-  qtyMax = 100;
 
   readonly qualityShortcuts = [500, 700, 800, 900, 950];
   filtersCollapsed = true;
@@ -100,19 +99,19 @@ export class CargoManifestComponent {
 
   get hasActiveFilter(): boolean {
     return this.qualityMin > 0 || this.qualityMax < 1000 ||
-           this.qtyMin > 0 || this.qtyMax < 100 ||
+           this.qtyMin > 0 ||
            this.selectedMaterials.size > 0;
   }
 
   resetFilters(): void {
     this.qualityMin = 0; this.qualityMax = 1000;
-    this.qtyMin = 0; this.qtyMax = 100;
+    this.qtyMin = 0;
     this.selectedMaterials = new Set();
   }
 
   private passesFilter(r: MaterialRecord): boolean {
     return r.quality >= this.qualityMin && r.quality <= this.qualityMax &&
-           r.quantity >= this.qtyMin && r.quantity <= this.qtyMax &&
+           r.quantity >= this.qtyMin &&
            (this.selectedMaterials.size === 0 || this.selectedMaterials.has(r.material));
   }
 

@@ -25,6 +25,7 @@ export class MaterialsComponent {
       changes: [
         'Added location search when adding material records',
         'Added another reset filters button',
+        'Quantity filter changed to minimum-value slider',
       ],
     },
     {
