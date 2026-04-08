@@ -17,9 +17,18 @@ export class MaterialStorageService {
   }
 
   add(entry: Omit<MaterialRecord, 'id'>): MaterialRecord {
+    const existing = this.records().find(
+      r => r.material === entry.material &&
+           r.quality  === entry.quality  &&
+           r.location === entry.location
+    );
+    if (existing) {
+      const merged = { ...existing, quantity: existing.quantity + entry.quantity };
+      this.save(this.records().map(r => r.id === existing.id ? merged : r));
+      return merged;
+    }
     const record: MaterialRecord = { ...entry, id: crypto.randomUUID() };
-    const next = [...this.records(), record];
-    this.save(next);
+    this.save([...this.records(), record]);
     return record;
   }
 

@@ -28,6 +28,25 @@ describe('MaterialStorageService', () => {
     expect(service.getAll()).toHaveLength(2);
   });
 
+  it('add() should merge quantity when same material, quality, and location already exist', () => {
+    service.add({ material: 'AGC', quality: 800, quantity: 10, location: 'Port Tressler' });
+    service.add({ material: 'AGC', quality: 800, quantity: 5,  location: 'Port Tressler' });
+    expect(service.getAll()).toHaveLength(1);
+    expect(service.getAll()[0].quantity).toBe(15);
+  });
+
+  it('add() should not merge when quality differs', () => {
+    service.add({ material: 'AGC', quality: 800, quantity: 10, location: 'Port Tressler' });
+    service.add({ material: 'AGC', quality: 900, quantity: 5,  location: 'Port Tressler' });
+    expect(service.getAll()).toHaveLength(2);
+  });
+
+  it('add() should not merge when location differs', () => {
+    service.add({ material: 'AGC', quality: 800, quantity: 10, location: 'Port Tressler' });
+    service.add({ material: 'AGC', quality: 800, quantity: 5,  location: 'CRU-L1' });
+    expect(service.getAll()).toHaveLength(2);
+  });
+
   it('remove() should delete the record with the given id', () => {
     const record = service.add({ material: 'AGC', quality: 800, quantity: 10, location: 'Port Tressler' });
     service.remove(record.id);

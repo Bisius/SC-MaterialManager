@@ -23,13 +23,14 @@ export class MaterialsComponent {
   readonly changelog: { version: string; date: string; changes: string[] }[] = [
     {
       version: 'v1.2',
-      date: '2026-04-08',
+      date: '2026-04-09',
       changes: [
         'Added location search when adding material records',
         'Added another reset filters button',
         'Quantity filter changed to minimum-value slider',
         'Undo button to restore last deleted record(s)',
         'Added "How to use" help guide in the footer',
+        'Duplicate material records at the same location and quality are now merged automatically',
       ],
     },
     {
