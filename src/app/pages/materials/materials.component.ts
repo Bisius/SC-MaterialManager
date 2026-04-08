@@ -24,6 +24,7 @@ export class MaterialsComponent {
       date: '2026-04-08',
       changes: [
         'Location autocomplete: focus shows active stations, typing ranks active matches first',
+        'Reset Filters button in action bar clears all active filters instantly',
       ],
     },
     {

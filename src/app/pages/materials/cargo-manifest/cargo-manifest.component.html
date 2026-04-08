@@ -28,6 +28,12 @@
     <button (click)="openAddMaterial.emit()" class="hud-toolbar-btn">
       ADD MATERIAL
     </button>
+    @if (hasActiveFilter) {
+      <button (click)="resetFilters()" class="hud-toolbar-btn text-hud-error border-hud-error hover:bg-hud-error hover:text-white">
+        <span class="material-icons text-[14px]">close</span>
+        RESET FILTERS
+      </button>
+    }
   </div>
 
   <!-- Import mode modal -->
