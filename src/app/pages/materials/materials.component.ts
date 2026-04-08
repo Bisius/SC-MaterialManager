@@ -23,8 +23,8 @@ export class MaterialsComponent {
       version: 'v1.2',
       date: '2026-04-08',
       changes: [
-        'Location autocomplete: focus shows active stations, typing ranks active matches first',
-        'Reset Filters button in action bar clears all active filters instantly',
+        'Added location search when adding material records',
+        'Added another reset filters button',
       ],
     },
     {
