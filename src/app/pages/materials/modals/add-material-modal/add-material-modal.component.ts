@@ -22,7 +22,7 @@ export class AddMaterialModalComponent {
   private storage = inject(MaterialStorageService);
   readonly filter = inject(StationFilterService);
 
-  readonly goToManifest = signal(true);
+  readonly goToManifest = signal(false);
 
   @ViewChild('locationWrapper') private locationWrapperEl!: ElementRef<HTMLElement>;
 
