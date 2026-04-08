@@ -26,6 +26,7 @@ export class MaterialsComponent {
         'Added location search when adding material records',
         'Added another reset filters button',
         'Quantity filter changed to minimum-value slider',
+        'Undo button to restore last deleted record(s)',
       ],
     },
     {

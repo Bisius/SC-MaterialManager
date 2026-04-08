@@ -9,6 +9,9 @@ export class MaterialStorageService {
   /** Reactive list — always in sync with localStorage. */
   readonly records = signal<MaterialRecord[]>(this.load());
 
+  /** Last deleted records — used for undo. */
+  readonly lastDeleted = signal<MaterialRecord[]>([]);
+
   getAll(): MaterialRecord[] {
     return this.records();
   }
@@ -21,7 +24,23 @@ export class MaterialStorageService {
   }
 
   remove(id: string): void {
+    const record = this.records().find(r => r.id === id);
+    if (record) this.lastDeleted.set([record]);
     this.save(this.records().filter(r => r.id !== id));
+  }
+
+  removeMany(ids: string[]): void {
+    const idSet = new Set(ids);
+    const deleted = this.records().filter(r => idSet.has(r.id));
+    if (deleted.length) this.lastDeleted.set(deleted);
+    this.save(this.records().filter(r => !idSet.has(r.id)));
+  }
+
+  undoDelete(): void {
+    const toRestore = this.lastDeleted();
+    if (!toRestore.length) return;
+    this.save([...this.records(), ...toRestore]);
+    this.lastDeleted.set([]);
   }
 
   updateQuantity(id: string, newQuantity: number): void {

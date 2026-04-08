@@ -34,6 +34,12 @@
         RESET FILTERS
       </button>
     }
+    @if (canUndo) {
+      <button (click)="onUndoDelete()" class="hud-toolbar-btn text-hud-accent border-hud-accent hover:bg-hud-deep">
+        <span class="material-icons text-[14px]">undo</span>
+        UNDO DELETE
+      </button>
+    }
   </div>
 
   <!-- Import mode modal -->

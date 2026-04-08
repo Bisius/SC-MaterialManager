@@ -203,13 +203,18 @@ export class CargoManifestComponent {
   }
 
   onRemoveGroup(g: MaterialGroup): void {
-    g.records.forEach(r => {
-      this.storage.remove(r.id);
-      this.selectedIds.delete(r.id);
-      if (this.activeUseId === r.id) this.activeUseId = null;
+    const ids = g.records.map(r => r.id);
+    this.storage.removeMany(ids);
+    ids.forEach(id => {
+      this.selectedIds.delete(id);
+      if (this.activeUseId === id) this.activeUseId = null;
     });
     this.selectedIds = new Set(this.selectedIds);
   }
+
+  get canUndo(): boolean { return this.storage.lastDeleted().length > 0; }
+
+  onUndoDelete(): void { this.storage.undoDelete(); }
 
   onOpenUse(r: MaterialRecord): void {
     if (this.activeUseId === r.id) {

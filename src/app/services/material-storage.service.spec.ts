@@ -103,4 +103,67 @@ describe('MaterialStorageService', () => {
     expect(fresh.getAll()).toHaveLength(1);
     expect(fresh.getAll()[0].material).toBe('AGC');
   });
+
+  // ── undo / removeMany ─────────────────────────────────────
+
+  it('remove() should store the deleted record in lastDeleted', () => {
+    const record = service.add({ material: 'AGC', quality: 800, quantity: 10, location: 'A' });
+    service.remove(record.id);
+    expect(service.lastDeleted()).toHaveLength(1);
+    expect(service.lastDeleted()[0].id).toBe(record.id);
+  });
+
+  it('undoDelete() should restore the last deleted record', () => {
+    const record = service.add({ material: 'AGC', quality: 800, quantity: 10, location: 'A' });
+    service.remove(record.id);
+    service.undoDelete();
+    expect(service.getAll()).toHaveLength(1);
+    expect(service.getAll()[0].id).toBe(record.id);
+  });
+
+  it('undoDelete() should clear lastDeleted after restoring', () => {
+    const record = service.add({ material: 'AGC', quality: 800, quantity: 10, location: 'A' });
+    service.remove(record.id);
+    service.undoDelete();
+    expect(service.lastDeleted()).toHaveLength(0);
+  });
+
+  it('undoDelete() should do nothing when lastDeleted is empty', () => {
+    service.add({ material: 'AGC', quality: 800, quantity: 10, location: 'A' });
+    service.undoDelete();
+    expect(service.getAll()).toHaveLength(1);
+  });
+
+  it('remove() twice should only keep the most recent deleted record in lastDeleted', () => {
+    const a = service.add({ material: 'AGC', quality: 700, quantity: 5, location: 'A' });
+    const b = service.add({ material: 'BXA', quality: 900, quantity: 3, location: 'B' });
+    service.remove(a.id);
+    service.remove(b.id);
+    expect(service.lastDeleted()).toHaveLength(1);
+    expect(service.lastDeleted()[0].id).toBe(b.id);
+  });
+
+  it('removeMany() should delete all given records', () => {
+    const a = service.add({ material: 'AGC', quality: 700, quantity: 5, location: 'A' });
+    const b = service.add({ material: 'BXA', quality: 900, quantity: 3, location: 'B' });
+    const c = service.add({ material: 'TIT', quality: 800, quantity: 2, location: 'C' });
+    service.removeMany([a.id, b.id]);
+    expect(service.getAll()).toHaveLength(1);
+    expect(service.getAll()[0].id).toBe(c.id);
+  });
+
+  it('removeMany() should store all deleted records in lastDeleted', () => {
+    const a = service.add({ material: 'AGC', quality: 700, quantity: 5, location: 'A' });
+    const b = service.add({ material: 'BXA', quality: 900, quantity: 3, location: 'B' });
+    service.removeMany([a.id, b.id]);
+    expect(service.lastDeleted()).toHaveLength(2);
+  });
+
+  it('undoDelete() should restore all records deleted by removeMany()', () => {
+    const a = service.add({ material: 'AGC', quality: 700, quantity: 5, location: 'A' });
+    const b = service.add({ material: 'BXA', quality: 900, quantity: 3, location: 'B' });
+    service.removeMany([a.id, b.id]);
+    service.undoDelete();
+    expect(service.getAll()).toHaveLength(2);
+  });
 });
