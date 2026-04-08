@@ -4,7 +4,7 @@
     <div class="relative w-full max-w-3xl" (click)="$event.stopPropagation()">
       <button (click)="close.emit()"
               class="absolute top-3 right-3 z-10 hud-btn-ghost text-base leading-none px-2 py-0.5">✕</button>
-      <section class="panel p-6 max-w-3xl">
+      <section class="panel p-6 max-w-3xl overflow-visible">
         <div class="hud-section">
           <span class="hud-section-title">// New Entry</span>
           <div class="hud-divider"></div>
@@ -48,19 +48,16 @@
           <!-- Location -->
           <div class="flex flex-col gap-1.5">
             <label class="hud-label">// Storage Location</label>
-            <select formControlName="location" class="sci-input">
-              <option value="" disabled>-- SELECT LOCATION --</option>
-              @if (filter.activeStationCount() > 0) {
-                <option value="" disabled class="text-hud-muted">-- {{ filter.activeStationCount() }} ACTIVE STATIONS --</option>
-              }
-              @for (sys of filter.filteredSystems(); track sys) {
-                <optgroup [label]="'[ ' + sys + ' ]'">
-                  @for (loc of filter.filteredLocationsBySystem(sys); track loc.name) {
-                    <option [value]="loc.name">{{ loc.name }}</option>
-                  }
-                </optgroup>
-              }
-            </select>
+            <div class="relative" #locationWrapper>
+              <input type="text"
+                [value]="locationInputText()"
+                (input)="onLocationInput($any($event.target).value)"
+                (focus)="onLocationFocus()"
+                (blur)="locationDropdownOpen.set(false)"
+                placeholder="TYPE TO SEARCH..."
+                autocomplete="off"
+                class="sci-input w-full" />
+            </div>
             @if (locationCtrl.invalid && locationCtrl.touched) {
               <span class="text-hud-error text-xs tracking-widest uppercase">! REQUIRED</span>
             }
@@ -89,6 +86,39 @@
 
         </form>
       </section>
+
+      <!-- Dropdowns rendered outside .panel to escape its clip-path -->
+      @if (locDropPos(); as pos) {
+        @if (locationDropdownOpen()) {
+          @if (locationDropdownItems().length > 0) {
+            <ul class="fixed z-[60] max-h-48 overflow-y-auto bg-(--bg-base) border border-hud-mid"
+              [style.top.px]="pos.top" [style.left.px]="pos.left" [style.width.px]="pos.width">
+              @if (!locationInputText().trim() && filter.activeStationCount() > 0) {
+                <li class="px-3 pt-2 pb-1 text-[10px] tracking-widest uppercase text-hud-accent opacity-70 select-none">
+                  {{ filter.activeStationCount() }} ACTIVE STATIONS
+                </li>
+              }
+              @for (item of locationDropdownItems(); track item.loc.name) {
+                <li (mousedown)="selectLocation(item.loc.name)"
+                  class="px-3 py-2 cursor-pointer hover:bg-hud-deep hover:text-white text-xs tracking-widest uppercase flex items-center gap-2"
+                  [class]="item.isActive ? 'text-hud-accent' : 'text-hud-primary'">
+                  @if (item.isActive) {
+                    <span class="w-1.5 h-1.5 rounded-full bg-hud-accent shrink-0"></span>
+                  } @else {
+                    <span class="w-1.5 h-1.5 shrink-0"></span>
+                  }
+                  {{ item.loc.name }}
+                </li>
+              }
+            </ul>
+          } @else {
+            <div class="fixed z-[60] border border-hud-mid bg-(--bg-base) px-3 py-2 text-xs tracking-widest uppercase text-hud-muted"
+              [style.top.px]="pos.top" [style.left.px]="pos.left" [style.width.px]="pos.width">
+              -- NO MATCHES --
+            </div>
+          }
+        }
+      }
     </div>
   </div>
 }

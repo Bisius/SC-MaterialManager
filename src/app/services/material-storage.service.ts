@@ -9,19 +9,47 @@ export class MaterialStorageService {
   /** Reactive list — always in sync with localStorage. */
   readonly records = signal<MaterialRecord[]>(this.load());
 
+  /** Last deleted records — used for undo. */
+  readonly lastDeleted = signal<MaterialRecord[]>([]);
+
   getAll(): MaterialRecord[] {
     return this.records();
   }
 
   add(entry: Omit<MaterialRecord, 'id'>): MaterialRecord {
+    const existing = this.records().find(
+      r => r.material === entry.material &&
+           r.quality  === entry.quality  &&
+           r.location === entry.location
+    );
+    if (existing) {
+      const merged = { ...existing, quantity: existing.quantity + entry.quantity };
+      this.save(this.records().map(r => r.id === existing.id ? merged : r));
+      return merged;
+    }
     const record: MaterialRecord = { ...entry, id: crypto.randomUUID() };
-    const next = [...this.records(), record];
-    this.save(next);
+    this.save([...this.records(), record]);
     return record;
   }
 
   remove(id: string): void {
+    const record = this.records().find(r => r.id === id);
+    if (record) this.lastDeleted.set([record]);
     this.save(this.records().filter(r => r.id !== id));
+  }
+
+  removeMany(ids: string[]): void {
+    const idSet = new Set(ids);
+    const deleted = this.records().filter(r => idSet.has(r.id));
+    if (deleted.length) this.lastDeleted.set(deleted);
+    this.save(this.records().filter(r => !idSet.has(r.id)));
+  }
+
+  undoDelete(): void {
+    const toRestore = this.lastDeleted();
+    if (!toRestore.length) return;
+    this.save([...this.records(), ...toRestore]);
+    this.lastDeleted.set([]);
   }
 
   updateQuantity(id: string, newQuantity: number): void {

@@ -28,6 +28,18 @@
     <button (click)="openAddMaterial.emit()" class="hud-toolbar-btn">
       ADD MATERIAL
     </button>
+    @if (hasActiveFilter) {
+      <button (click)="resetFilters()" class="hud-toolbar-btn text-hud-error border-hud-error hover:bg-hud-error hover:text-white">
+        <span class="material-icons text-[14px]">close</span>
+        RESET FILTERS
+      </button>
+    }
+    @if (canUndo) {
+      <button (click)="onUndoDelete()" class="hud-toolbar-btn text-hud-accent border-hud-accent hover:bg-hud-deep">
+        <span class="material-icons text-[14px]">undo</span>
+        UNDO DELETE
+      </button>
+    }
   </div>
 
   <!-- Import mode modal -->
@@ -116,12 +128,11 @@
             <div class="hud-dual-range">
               <div class="hud-dual-range-track"></div>
               <div class="hud-dual-range-fill"
-                [style.left.%]="qtyMin"
-                [style.width.%]="qtyMax - qtyMin"></div>
-              <input type="range" min="0" [max]="qtyMax" step="5" [(ngModel)]="qtyMin" />
-              <input type="range" [min]="qtyMin" max="100" step="5" [(ngModel)]="qtyMax" />
+                [style.left.%]="0"
+                [style.width.%]="qtyMin"></div>
+              <input type="range" min="0" max="100" step="5" [(ngModel)]="qtyMin" />
             </div>
-            <span class="text-xs font-mono text-hud-muted w-12 shrink-0">{{ qtyMax }}</span>
+            <span class="text-xs font-mono text-hud-muted w-20 shrink-0">{{ qtyMin }}+ cSCU</span>
           </div>
 
           <!-- Material row -->

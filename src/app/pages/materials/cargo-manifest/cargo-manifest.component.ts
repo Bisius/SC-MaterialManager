@@ -64,7 +64,6 @@ export class CargoManifestComponent {
   qualityMin = 0;
   qualityMax = 1000;
   qtyMin = 0;
-  qtyMax = 100;
 
   readonly qualityShortcuts = [500, 700, 800, 900, 950];
   filtersCollapsed = true;
@@ -100,19 +99,19 @@ export class CargoManifestComponent {
 
   get hasActiveFilter(): boolean {
     return this.qualityMin > 0 || this.qualityMax < 1000 ||
-           this.qtyMin > 0 || this.qtyMax < 100 ||
+           this.qtyMin > 0 ||
            this.selectedMaterials.size > 0;
   }
 
   resetFilters(): void {
     this.qualityMin = 0; this.qualityMax = 1000;
-    this.qtyMin = 0; this.qtyMax = 100;
+    this.qtyMin = 0;
     this.selectedMaterials = new Set();
   }
 
   private passesFilter(r: MaterialRecord): boolean {
     return r.quality >= this.qualityMin && r.quality <= this.qualityMax &&
-           r.quantity >= this.qtyMin && r.quantity <= this.qtyMax &&
+           r.quantity >= this.qtyMin &&
            (this.selectedMaterials.size === 0 || this.selectedMaterials.has(r.material));
   }
 
@@ -204,13 +203,18 @@ export class CargoManifestComponent {
   }
 
   onRemoveGroup(g: MaterialGroup): void {
-    g.records.forEach(r => {
-      this.storage.remove(r.id);
-      this.selectedIds.delete(r.id);
-      if (this.activeUseId === r.id) this.activeUseId = null;
+    const ids = g.records.map(r => r.id);
+    this.storage.removeMany(ids);
+    ids.forEach(id => {
+      this.selectedIds.delete(id);
+      if (this.activeUseId === id) this.activeUseId = null;
     });
     this.selectedIds = new Set(this.selectedIds);
   }
+
+  get canUndo(): boolean { return this.storage.lastDeleted().length > 0; }
+
+  onUndoDelete(): void { this.storage.undoDelete(); }
 
   onOpenUse(r: MaterialRecord): void {
     if (this.activeUseId === r.id) {
