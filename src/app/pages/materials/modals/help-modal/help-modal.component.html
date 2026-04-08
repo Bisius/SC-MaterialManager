@@ -1,0 +1,126 @@
+@if (open) {
+  <div class="fixed inset-0 bg-black/70 z-40 flex items-start justify-center py-16 overflow-y-auto px-4"
+       (click)="close.emit()">
+    <div class="relative w-full max-w-2xl" (click)="$event.stopPropagation()">
+      <div class="panel p-0">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-hud-dim px-5 py-3">
+          <span class="text-xs tracking-widest uppercase text-hud-accent">// How to use</span>
+          <button (click)="close.emit()" class="hud-btn-ghost text-base leading-none px-2 py-0.5">✕</button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-5 space-y-6">
+
+          <!-- Step 1 -->
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-[10px] font-bold tracking-widest uppercase text-hud-accent border border-hud-accent px-1.5 py-0.5">01</span>
+              <span class="text-sm font-bold tracking-widest uppercase text-hud-primary">Select Preferred Stations</span>
+            </div>
+            <ul class="space-y-1 pl-1">
+              <li class="flex items-start gap-2 text-xs text-hud-body">
+                <span class="text-hud-accent shrink-0 mt-0.5">›</span>
+                Click the <span class="text-hud-primary">STATIONS</span> button in the action bar.
+              </li>
+              <li class="flex items-start gap-2 text-xs text-hud-body">
+                <span class="text-hud-accent shrink-0 mt-0.5">›</span>
+                Toggle stations on or off — active stations are highlighted and used to filter locations throughout the app.
+              </li>
+              <li class="flex items-start gap-2 text-xs text-hud-body">
+                <span class="text-hud-accent shrink-0 mt-0.5">›</span>
+                With no stations selected, all locations are available everywhere.
+              </li>
+            </ul>
+          </div>
+
+          <!-- Step 2 -->
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-[10px] font-bold tracking-widest uppercase text-hud-accent border border-hud-accent px-1.5 py-0.5">02</span>
+              <span class="text-sm font-bold tracking-widest uppercase text-hud-primary">Add Custom Locations</span>
+            </div>
+            <ul class="space-y-1 pl-1">
+              <li class="flex items-start gap-2 text-xs text-hud-body">
+                <span class="text-hud-accent shrink-0 mt-0.5">›</span>
+                Click the <span class="text-hud-primary">LOCATIONS</span> button in the action bar.
+              </li>
+              <li class="flex items-start gap-2 text-xs text-hud-body">
+                <span class="text-hud-accent shrink-0 mt-0.5">›</span>
+                Enter a name and system for your custom location, then confirm. Custom locations appear alongside built-in ones and are included in the active-station dropdown.
+              </li>
+            </ul>
+          </div>
+
+          <!-- Step 3 -->
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-[10px] font-bold tracking-widest uppercase text-hud-accent border border-hud-accent px-1.5 py-0.5">03</span>
+              <span class="text-sm font-bold tracking-widest uppercase text-hud-primary">Add Materials</span>
+            </div>
+            <ul class="space-y-1 pl-1">
+              <li class="flex items-start gap-2 text-xs text-hud-body">
+                <span class="text-hud-accent shrink-0 mt-0.5">›</span>
+                Click <span class="text-hud-primary">ADD MATERIAL</span> in the action bar.
+              </li>
+              <li class="flex items-start gap-2 text-xs text-hud-body">
+                <span class="text-hud-accent shrink-0 mt-0.5">›</span>
+                Select the material type, enter quality (0–1000) and quantity (cSCU).
+              </li>
+              <li class="flex items-start gap-2 text-xs text-hud-body">
+                <span class="text-hud-accent shrink-0 mt-0.5">›</span>
+                For the location, type to search or focus the field to browse your active stations. Active stations appear highlighted at the top of the results.
+              </li>
+              <li class="flex items-start gap-2 text-xs text-hud-body">
+                <span class="text-hud-accent shrink-0 mt-0.5">›</span>
+                Toggle <span class="text-hud-primary">Show manifest after adding</span> to jump straight to the cargo view after each entry.
+              </li>
+            </ul>
+          </div>
+
+          <!-- Step 4 -->
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-[10px] font-bold tracking-widest uppercase text-hud-accent border border-hud-accent px-1.5 py-0.5">04</span>
+              <span class="text-sm font-bold tracking-widest uppercase text-hud-primary">Remove / Use / Move Materials</span>
+            </div>
+            <ul class="space-y-1 pl-1">
+              <li class="flex items-start gap-2 text-xs text-hud-body">
+                <span class="text-hud-accent shrink-0 mt-0.5">›</span>
+                <span><span class="text-hud-primary">Delete</span> — click the <span class="font-bold text-hud-error">×</span> button on a record or group to remove it. An <span class="text-hud-accent">UNDO DELETE</span> button appears in the action bar to restore the last removed item(s).</span>
+              </li>
+              <li class="flex items-start gap-2 text-xs text-hud-body">
+                <span class="text-hud-accent shrink-0 mt-0.5">›</span>
+                <span><span class="text-hud-primary">Use</span> — click the flask icon on a record to log consumption. Enter the amount used; if the remaining quantity reaches zero the record is automatically removed.</span>
+              </li>
+              <li class="flex items-start gap-2 text-xs text-hud-body">
+                <span class="text-hud-accent shrink-0 mt-0.5">›</span>
+                <span><span class="text-hud-primary">Move</span> — check one or more records, choose a destination in the transfer toolbar that appears, then click <span class="text-hud-primary">TRANSFER</span>.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Step 5 -->
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-[10px] font-bold tracking-widest uppercase text-hud-accent border border-hud-accent px-1.5 py-0.5">05</span>
+              <span class="text-sm font-bold tracking-widest uppercase text-hud-primary">Import / Export Data</span>
+            </div>
+            <ul class="space-y-1 pl-1">
+              <li class="flex items-start gap-2 text-xs text-hud-body">
+                <span class="text-hud-accent shrink-0 mt-0.5">›</span>
+                <span><span class="text-hud-primary">Export</span> — click the download icon in the toolbar to save all records as a <span class="font-mono">.json</span> file.</span>
+              </li>
+              <li class="flex items-start gap-2 text-xs text-hud-body">
+                <span class="text-hud-accent shrink-0 mt-0.5">›</span>
+                <span><span class="text-hud-primary">Import</span> — click the upload icon, select a previously exported file and choose <span class="text-hud-primary">Merge</span> (adds to existing records) or <span class="text-hud-error">Replace</span> (overwrites everything).</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+}

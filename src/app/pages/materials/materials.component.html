@@ -21,6 +21,10 @@
 
   <!-- Footer -->
   <footer class="mt-10 border-t border-hud-dim pt-4 flex items-center justify-start gap-6">
+    <button (click)="showHelpModal = true"
+            class="text-xs tracking-widest uppercase text-hud-ghost hover:text-hud-accent transition-colors cursor-pointer">
+      // how to use
+    </button>
     <a href="https://github.com/Bisius/SC-MaterialManager/issues"
        target="_blank"
        rel="noopener noreferrer"
@@ -38,6 +42,7 @@
   <app-stations-modal [open]="showStationsModal" (close)="showStationsModal = false" />
   <app-add-location-modal [open]="showAddLocationModal" (close)="showAddLocationModal = false" />
   <app-add-material-modal [open]="showAddModal" (close)="showAddModal = false" (recorded)="onRecorded($event)" />
+  <app-help-modal [open]="showHelpModal" (close)="showHelpModal = false" />
 
   </div>
 </div>
