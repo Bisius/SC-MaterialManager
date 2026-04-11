@@ -10,6 +10,7 @@ export const materials: Material[] = [
 	{ name: 'Aslarite',        short: 'ASL' },
 	{ name: 'Beradom',         short: 'BER' },
 	{ name: 'Beryl',           short: 'BRL' },
+	{ name: 'Bexalite',        short: 'BEX' },
 	{ name: 'Carinite',        short: 'CAR' },
 	{ name: 'Copper',          short: 'COP' },
 	{ name: 'Corundum',        short: 'COR' },

@@ -64,13 +64,14 @@ export const locations: Location[] = [
 	{ name: "Rod's Fuel'n Suppies",     system: 'Pyro', type: LocationType.Station, refinery: false },
 	{ name: 'Starlight Service Station',system: 'Pyro', type: LocationType.Station, refinery: false },
 	{ name: 'Patch City',               system: 'Pyro', type: LocationType.Station, refinery: false },
+	{ name: 'Gaslight',                 system: 'Pyro', type: LocationType.Station, refinery: false },
 
 	// Gateways
 	{ name: 'Pyro - Stanton Gateway',   system: 'Pyro', type: LocationType.Station, refinery: true  },
 	{ name: 'Pyro - Nyx Gateway',       system: 'Pyro', type: LocationType.Station, refinery: false },
 
 	// Nyx
-	{ name: 'Levski',                        system: 'Nyx',  type: LocationType.City,    refinery: true  },
+	{ name: 'Levski',                         system: 'Nyx',  type: LocationType.City,   refinery: true  },
 	{ name: "People's Service Station Lambda",system: 'Nyx', type: LocationType.Station, refinery: false },
 	{ name: "People's Service Station Theta", system: 'Nyx', type: LocationType.Station, refinery: false },
 	{ name: "People's Service Station Delta", system: 'Nyx', type: LocationType.Station, refinery: false },
