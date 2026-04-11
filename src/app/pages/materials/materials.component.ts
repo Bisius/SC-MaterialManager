@@ -22,6 +22,14 @@ export class MaterialsComponent {
 
   readonly changelog: { version: string; date: string; changes: string[] }[] = [
     {
+      version: 'v1.2.1',
+      date: '2026-04-11',
+      changes: [
+        'Added Gaslight station (Pyro)',
+        'Added Bexalite to the materials list',
+      ],
+    },
+    {
       version: 'v1.2',
       date: '2026-04-09',
       changes: [
